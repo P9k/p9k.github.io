@@ -168,6 +168,7 @@ website/
 ├── _build/                   Nie mit hochladen — siehe unten
 │   ├── build.py              Der Generator (reines Python + PyYAML)
 │   ├── config.yaml           Pfade, Navigation, Optionen
+│   ├── title-breaks.yaml     Optionale Umbruch-Hinweise für lange CV-Titel
 │   ├── templates/base.html   HTML-Grundgerüst aller Seiten
 │   ├── assets/               style.css und site.js (werden kopiert)
 │   └── generated/            cv.tex + pdflatex-Nebendateien (Build-Zwischenstand)
@@ -470,6 +471,26 @@ sein Schema kennt von Haus aus keine Talks/Funding/Teaching-Abschnitte — beide
 widerspricht dem Grundsatz „ohne große externe Tools“ dieses Projekts. Die
 Markdown-Ausgabe deckt denselben Bedarf (portables Klartextformat) ohne diese
 Kosten.
+
+### Publikationsliste im PDF/Markdown-CV
+
+Format wie in der Chemie üblich (angelehnt an *Angewandte Chemie*): Autoren
+(eigener Name automatisch fett, über `highlight_author` in `config.yaml` —
+dieselbe Regel wie auf `publications.html`), Titel, *Journal* **Jahrgang**,
+*Band*, Seiten. Kein Umbauen nötig — das folgt automatisch aus `journal:`,
+`pubyear:`, `volume:`, `pages:` in der Paper-Notiz.
+
+Lange Titel mit Chemieformeln ohne Leerzeichen (z. B. `[Ni(ZnMe)6(ZnCp*)2]`)
+haben für `pdflatex` keine Stelle zum Umbrechen und liefen früher teils über
+den Seitenrand hinaus. Dagegen zwei Maßnahmen: Die ganze Publikationsliste
+steht in einer `\sloppy`-Gruppe (etwas lockerer Zeilenausgleich statt starrem
+Überlauf), und zusätzlich `_build/title-breaks.yaml` — eine optionale,
+von Hand gepflegte Datei mit gezielten Umbruch-Hinweisen für einzelne Titel,
+ganz ohne LaTeX-Kenntnisse: den Titel (oder das problematische Wort) eintragen,
+daneben dieselbe Stelle nochmal mit `|` an jeder Stelle, an der ein Umbruch
+in Ordnung wäre. Datei ist auskommentiert und selbsterklärend; leer/fehlend
+ändert nichts. Aktuell (Stand dieses Updates) braucht keiner der 70 Titel
+einen manuellen Hinweis — die Datei ist als Reserve für zukünftige Titel da.
 
 ### Wenn kein PDF erscheint
 

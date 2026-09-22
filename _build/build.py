@@ -1075,6 +1075,51 @@ def tex_escape(s):
     return s
 
 
+def load_title_breaks():
+    """Optional, user-maintained line-break hints for long publication
+    titles that pdflatex can't wrap on its own -- chemical formulas like
+    "[Ni(ZnMe)6(ZnCp*)2]" have no spaces or hyphens for TeX to break at, so
+    without a hint they either overflow the page margin or force very loose
+    spacing on the rest of the line. See _build/title-breaks.yaml.
+    """
+    path = os.path.join(HERE, "title-breaks.yaml")
+    if not os.path.isfile(path):
+        return {}
+    try:
+        with io.open(path, encoding="utf-8") as fh:
+            data = yaml.safe_load(fh) or {}
+    except yaml.YAMLError:
+        return {}
+    return {str(k): str(v) for k, v in data.items()} if isinstance(data, dict) else {}
+
+
+def tex_escape_with_breaks(text, breaks):
+    """tex_escape(), plus user-supplied manual break points from
+    title-breaks.yaml. A '|' in a hint's replacement becomes an invisible
+    optional break (\\allowbreak) -- nothing is shown unless the line
+    actually wraps there, so it's safe to sprinkle liberally.
+    """
+    t = S(text)
+    for bad, good in breaks.items():
+        if bad and bad in t:
+            t = t.replace(bad, good)
+    return tex_escape(t).replace("|", r"\allowbreak{}")
+
+
+def highlight_authors_tex(authors, pattern):
+    """LaTeX counterpart of highlight_authors(): bold the CV owner's own
+    name (highlight_author in config.yaml) wherever it appears in an
+    author list, matching what publications.html already does on the site.
+    """
+    text = tex_escape(authors)
+    if not text:
+        return ""
+    try:
+        return re.sub("(%s)" % pattern, r"\\textbf{\1}", text)
+    except re.error:
+        return text
+
+
 def tex_unicode_preamble(document):
     """Declare only those special characters that really occur in the document."""
     lines, unknown = [], set()
@@ -1229,18 +1274,30 @@ def build_latex_cv(cfg, d):
     sec("Talks and posters", "\n".join(body))
 
     if d.publications:
+        breaks = load_title_breaks()
         pubs = []
         total = len(d.publications)
-        pubs.append(r"\begin{enumerate}[leftmargin=2.2em,itemsep=2pt,start=1]")
+        # Angewandte Chemie reference style: authors, title, journal + bold
+        # year, italic volume, pages. \sloppy (scoped to the whole list) lets
+        # long titles wrap onto the next line with slightly looser spacing
+        # instead of silently overflowing the page margin -- see also
+        # title-breaks.yaml for chemical formulas that have no natural break
+        # point at all.
+        pubs.append(r"{\sloppy\begin{enumerate}[leftmargin=2.2em,itemsep=4pt,start=1]")
         for i, n in enumerate(d.publications):
-            ref = ", ".join(x for x in [
-                (r"\emph{%s}" % tex_escape(S(n.get("journal")))) if S(n.get("journal")) else "",
-                (r"\textbf{%s}" % tex_escape(S(n.get("volume")))) if S(n.get("volume")) else "",
-                tex_escape(S(n.get("pages"))), tex_escape(S(n.get("pubyear")))] if x)
-            pubs.append(r"\item[%d.] ``%s'': %s, %s." % (
-                total - i, tex_escape(S(n.get("publication"))),
-                tex_escape(S(n.get("authors"))), ref))
-        pubs.append(r"\end{enumerate}")
+            journal, year = S(n.get("journal")), S(n.get("pubyear"))
+            journal_year = " ".join(x for x in [
+                (r"\emph{%s}" % tex_escape(journal)) if journal else "",
+                (r"\textbf{%s}" % tex_escape(year)) if year else ""] if x)
+            tail = ", ".join(x for x in [
+                journal_year,
+                (r"\emph{%s}" % tex_escape(S(n.get("volume")))) if S(n.get("volume")) else "",
+                tex_escape(S(n.get("pages")))] if x)
+            pubs.append(r"\item[%d.] %s, %s, %s." % (
+                total - i,
+                highlight_authors_tex(n.get("authors"), cfg["highlight_author"]),
+                tex_escape_with_breaks(n.get("publication"), breaks), tail))
+        pubs.append(r"\end{enumerate}}")
         sec("Peer-reviewed journal articles", "\n".join(pubs))
 
     A(r"\end{document}")
@@ -1254,6 +1311,19 @@ MD_ESCAPE_RE = re.compile(r"([\\`*_{}\[\]#])")
 def md_escape(s):
     """Escape Markdown special characters in raw (non-Markdown) text."""
     return MD_ESCAPE_RE.sub(r"\\\1", S(s))
+
+
+def md_highlight_authors(authors, pattern):
+    """Markdown counterpart of highlight_authors_tex(): bold the CV owner's
+    own name in an author list.
+    """
+    text = md_escape(authors)
+    if not text:
+        return ""
+    try:
+        return re.sub("(%s)" % pattern, r"**\1**", text)
+    except re.error:
+        return text
 
 
 def build_markdown_cv(cfg, d):
@@ -1349,14 +1419,20 @@ def build_markdown_cv(cfg, d):
     if d.publications:
         pubs = []
         total = len(d.publications)
+        # Same Angewandte Chemie-style order as the PDF/LaTeX CV: authors,
+        # title, journal + bold year, italic volume, pages.
         for i, n in enumerate(d.publications):
-            ref = ", ".join(x for x in [
-                ("*%s*" % md_escape(S(n.get("journal")))) if S(n.get("journal")) else "",
-                ("**%s**" % md_escape(S(n.get("volume")))) if S(n.get("volume")) else "",
-                md_escape(S(n.get("pages"))), md_escape(S(n.get("pubyear")))] if x)
-            pubs.append("%d. “%s”: %s, %s." % (
-                total - i, md_escape(S(n.get("publication"))),
-                md_escape(S(n.get("authors"))), ref))
+            journal, year = S(n.get("journal")), S(n.get("pubyear"))
+            journal_year = " ".join(x for x in [
+                ("*%s*" % md_escape(journal)) if journal else "",
+                ("**%s**" % md_escape(year)) if year else ""] if x)
+            tail = ", ".join(x for x in [
+                journal_year,
+                ("*%s*" % md_escape(S(n.get("volume")))) if S(n.get("volume")) else "",
+                md_escape(S(n.get("pages")))] if x)
+            pubs.append("%d. %s, %s, %s." % (
+                total - i, md_highlight_authors(S(n.get("authors")), cfg["highlight_author"]),
+                md_escape(S(n.get("publication"))), tail))
         sec("Peer-reviewed journal articles", "\n".join(pubs))
 
     return "\n".join(o).rstrip() + "\n"
