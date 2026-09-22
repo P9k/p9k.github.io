@@ -1,0 +1,27 @@
+# ---------------------------------------------------------------------------
+# Manual line-break hints for the CV's publication list (cv.pdf / cv.tex).
+#
+# Why this file exists: pdflatex can only wrap a line at a space, an
+# existing hyphen, or a point its hyphenation dictionary recognises. A long
+# chemical formula like "[Ni(ZnMe)6(ZnCp*)2]" has none of those -- it's one
+# solid run of letters, digits, brackets and no spaces -- so without a hint
+# it either overflows the page margin or forces very loose word spacing on
+# the rest of that line.
+#
+# This file is entirely optional (an empty/missing file changes nothing)
+# and needs no LaTeX knowledge: for a title that looks wrong in cv.pdf,
+# add a line below with the exact text as it appears in the paper's
+# `publication:` field in the vault, and the same text again with a "|"
+# character at every point where a break would be acceptable. The "|" is
+# never shown in the PDF -- it only marks a place pdflatex is allowed to
+# wrap the line if it needs to.
+#
+# "exact title text (or just the problem fragment)": "same text with | at the ok-to-break points"
+#
+# Example (remove the leading # to activate):
+# "[Ni(ZnMe)6(ZnCp*)2]": "[Ni(ZnMe)6|(ZnCp*)2]"
+# "cyclopentadienyluranium-phosphine": "cyclopentadienyl|uranium-phosphine"
+#
+# Rebuild with ./update.sh afterwards to see the effect. You only need to
+# add a hint for a title that actually looks wrong in cv.pdf -- most titles
+# wrap fine on their own.
