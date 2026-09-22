@@ -17,7 +17,7 @@ vault:
 output: "."
 
 site:
-  url: "https://example.org"          # used for sitemap.xml and feed.xml
+  url: "https://p9k.github.io"          # used for sitemap.xml and feed.xml
   title: "Paul Jerabek"
   description: "Multiscale simulation of metal hydrides for hydrogen storage."
   lang: "en"
@@ -72,6 +72,10 @@ options:
   # Typeset the CV to cv.pdf for download (needs pdflatex; the .tex source
   # itself is written to _build/generated/ and is never published).
   latex_cv: true
+
+  # Write cv.md -- a plain-Markdown rendering of the same CV data, generated
+  # directly in Python (no pandoc, no YAMLResume, no extra dependency).
+  markdown_cv: true
 
   # Subtle full-page background animation, or "none" to switch it off.
   # One of: none, lattice, contours, orbits, diffusion, waves, wavefunction,
