@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="{{footer_name}}" href="feed.xml">
+<meta name="color-scheme" content="light dark">
+<!-- Apply the stored theme before the first paint, so pages never flash.
+     Order: link hash (the only channel that survives file:// browsing,
+     where each page gets its own storage area) -> localStorage -> system. -->
+<script>(function(){var d=document.documentElement,t=null;
+try{var m=/(?:^|[#?&])theme=(dark|light)/.exec(location.hash+location.search);if(m){t=m[1];}}catch(e){}
+if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
+if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
+{{extra_head}}
+</head>
+<body class="{{body_class}}" data-bg="{{bg}}">
+
+<canvas id="bg-anim" aria-hidden="true"></canvas>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="{{brand_href}}">{{brand}}</a>
+  <nav class="main">
+      {{nav}}
+      <button class="themebtn" id="themebtn" type="button" title="Switch colour theme" aria-label="Switch colour theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+      </button>
+  </nav>
+</div></header>
+
+<main id="main">
+{{content}}
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; {{year}} {{footer_name}} &middot; {{footer_location}}</span>
+  <span>Last updated {{built}}</span>
+</div></footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/bg.js" defer></script>
+{{extra_js}}
+</body>
+</html>

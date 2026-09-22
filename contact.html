@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact</title>
+<meta name="description" content="Multiscale simulation of metal hydrides for hydrogen storage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="Paul Jerabek" href="feed.xml">
+<meta name="color-scheme" content="light dark">
+<!-- Apply the stored theme before the first paint, so pages never flash.
+     Order: link hash (the only channel that survives file:// browsing,
+     where each page gets its own storage area) -> localStorage -> system. -->
+<script>(function(){var d=document.documentElement,t=null;
+try{var m=/(?:^|[#?&])theme=(dark|light)/.exec(location.hash+location.search);if(m){t=m[1];}}catch(e){}
+if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
+if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
+
+</head>
+<body class="" data-bg="bands">
+
+<canvas id="bg-anim" aria-hidden="true"></canvas>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="index.html">Paul Jerabek<span> &middot; Dr. rer. nat.</span></a>
+  <nav class="main">
+      <a href="index.html">about</a>
+      <a href="publications.html">publications</a>
+      <a href="projects.html">projects</a>
+      <a href="talks.html">talks</a>
+      <a href="teaching.html">teaching</a>
+      <a href="cv.html">cv</a>
+      <a class="cur" href="contact.html">contact</a>
+      <button class="themebtn" id="themebtn" type="button" title="Switch colour theme" aria-label="Switch colour theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+      </button>
+  </nav>
+</div></header>
+
+<main id="main">
+<section><div class="wrap">
+<h2 class="sec">Get in touch</h2>
+<div class="social"><a href="mailto:&#112;&#97;&#117;&#108;&#46;&#106;&#101;&#114;&#97;&#98;&#101;&#107;&#64;&#104;&#101;&#114;&#101;&#111;&#110;&#46;&#100;&#101;" rel="noopener">Email</a><a href="cv.html" rel="noopener">Curriculum Vitae</a></div>
+</div></section>
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; 2026 Paul Jerabek &middot; Geesthacht, Germany</span>
+  <span>Last updated 22 September 2026</span>
+</div></footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/bg.js" defer></script>
+
+</body>
+</html>

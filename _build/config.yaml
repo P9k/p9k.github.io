@@ -1,0 +1,103 @@
+# ---------------------------------------------------------------------------
+# Configuration for the website generator.
+# Everything here can be changed without touching build.py.
+# ---------------------------------------------------------------------------
+
+# Path to the Obsidian vault. Can be a single string, or a LIST of candidate
+# paths -- handy when you build the site from more than one computer and the
+# vault isn't always mounted in the same place. build.py tries them in order
+# and uses the first one that actually exists; add a line per machine here.
+# You can also override this at build time without touching this file:
+#   ./update.sh --vault /some/other/path
+#   WEBSITE_VAULT_PATH=/some/other/path ./update.sh
+vault:
+  - "/home/paul/Obsidian/Main-Vault"
+
+# Where the finished website is written (relative to the website/ folder).
+output: "."
+
+site:
+  url: "https://example.org"          # used for sitemap.xml and feed.xml
+  title: "Paul Jerabek"
+  description: "Multiscale simulation of metal hydrides for hydrogen storage."
+  lang: "en"
+  footer_location: "Geesthacht, Germany"
+
+# Name to highlight in author lists (regex alternatives, case sensitive).
+highlight_author: "P\\. ?Jerabek|Jerabek, ?P\\.|Paul Jerabek"
+
+# Internal Obsidian tags that should never show up as topic labels on the website.
+topic_blocklist:
+  - Forschung
+  - Side
+  - Roh
+  - Privatprojekt
+  - Lehre
+
+# Navigation: [label, file]
+nav:
+  - ["about",        "index.html"]
+  - ["publications", "publications.html"]
+  - ["projects",     "projects.html"]
+  - ["talks",        "talks.html"]
+  - ["teaching",     "teaching.html"]
+  - ["cv",           "cv.html"]
+  - ["contact",      "contact.html"]
+
+# Which folders in the vault to read. Paths are relative to the vault root.
+sources:
+  papers:    "20-Arbeit/Paper/Paper"
+  talks:     "20-Arbeit/Vorträge/Vortragssammlung"
+  projects:  "20-Arbeit/Projekte/_Projekte"
+  funding:   "20-Arbeit/Organisation/Karriere/Förderungen"
+  teaching:  "20-Arbeit/Lehre"
+  positions: "20-Arbeit/Organisation/Karriere/Stationen"
+  education: "20-Arbeit/Organisation/Karriere/Ausbildung"
+  service:   "20-Arbeit/Organisation/Karriere/Service"
+  research:  "20-Arbeit/Organisation/Karriere/Forschung"
+  news:      "20-Arbeit/Organisation/Karriere/News"
+  profile:   "20-Arbeit/Organisation/Karriere/CV-Profil.md"
+
+options:
+  # Number of entries shown on the front page.
+  front_publications: 4
+  front_news: 4
+  front_projects: 3
+  # Only papers with one of these status values are published on the website.
+  published_status: ["Published"]
+  # Generate these extras.
+  bibtex: true
+  sitemap: true
+  feed: true
+  # Typeset the CV to cv.pdf for download (needs pdflatex; the .tex source
+  # itself is written to _build/generated/ and is never published).
+  latex_cv: true
+
+  # Subtle full-page background animation, or "none" to switch it off.
+  # One of: none, lattice, contours, orbits, diffusion, waves, wavefunction,
+  # bands, mdtraj, interference, levels, hopping, front, phase, tank,
+  # dissociation -- see _build/assets/bg.js for what each one looks like
+  # (or the concept-preview file you already have). Change this line and
+  # rebuild to switch; no other file needs touching.
+  background_animation: "bands"
+
+# Where a project's picture is looked up when its `image:` (or `banner:`)
+# field is a bare filename with no folder, e.g. "scrap-metal.jpg".
+image_search_dirs:
+  - "90-Meta/Anhänge/banner"
+  - "90-Meta/Anhänge"
+
+# Legal notice ("Impressum"), shown on the Contact page. This is a template,
+# NOT legal advice -- fill in your real information. If the site represents
+# your institutional affiliation, check the exact wording your institution's
+# legal/communications office requires (in Germany: responsible party under
+# § 18 Abs. 2 MStV, address, contact, and any required disclosures).
+impressum:
+  enabled: false                  # flip to true once the fields below are filled in
+  responsible_name: ""            # e.g. "Dr. Paul Jerabek"
+  address_lines:
+    - ""                          # e.g. "Max-Planck-Straße 1"
+    - ""                          # e.g. "21502 Geesthacht, Germany"
+  email: ""                       # leave empty to reuse profile.email
+  phone: ""                       # optional
+  extra: ""                       # optional free text (Aufsichtsbehörde, USt-ID, disclaimers, ...)
