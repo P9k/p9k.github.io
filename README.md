@@ -179,6 +179,7 @@ website/
 ├── teaching.html
 ├── cv.html                   Druckfertig: Strg+P → als PDF speichern
 ├── cv.pdf                    Von pdflatex erzeugt (nur wenn installiert)
+├── cv.md                     Reines Markdown, in Python erzeugt (immer)
 ├── contact.html               Kontaktlinks + Impressum (siehe unten)
 ├── publications.bib          Komplette Publikationsliste als BibTeX
 ├── sitemap.xml, feed.xml
@@ -445,17 +446,30 @@ Verschleierung dort bringt nichts.
 
 ## CV erzeugen
 
-`cv.html` ist die Website-Fassung. Sie bietet zwei Wege zu einem PDF:
+`cv.html` ist die Website-Fassung. Der CV wird **vollautomatisch** aus denselben
+Vault-Daten wie der Rest der Seite gebaut (`CV-Profil.md` + Education/Positions/
+Funding/Service/Teaching/Talks/Papers-Notizen) — nichts davon wird von Hand
+gepflegt. Es gibt drei Ausgabeformen, alle aus genau derselben Datenquelle,
+alle bei jedem `./update.sh` neu erzeugt:
 
-**„Download PDF“** auf der Seite verlinkt auf `cv.pdf` — von `./update.sh`
-automatisch aus denselben Daten mit `pdflatex` erzeugt. Das ist die für Besucher
-gedachte, saubere Download-Datei; sie liegt fertig im Website-Ordner, es muss
-nichts manuell kompiliert werden. Der Link erscheint auf der Seite nur, wenn das
-letzte `./update.sh` das PDF auch tatsächlich erzeugen konnte (siehe unten).
-
-**Browser-Druck** funktioniert unabhängig davon immer: Im Browser
+**„Download PDF“** verlinkt auf `cv.pdf`, mit `pdflatex` erzeugt (siehe unten).
+**„Download Markdown“** verlinkt auf `cv.md` — eine reine Markdown-Fassung, komplett
+in Python geschrieben (`build_markdown_cv()` in `_build/build.py`), ohne jede
+Zusatzabhängigkeit (kein Pandoc, kein YAMLResume/Node.js). Praktisch für ein
+schnelles Copy-Paste in eine Bewerbung, ein Wiki oder einen Chat. Abschalten mit
+`markdown_cv: false` unter `options:` in `config.yaml`.
+**Browser-Druck** funktioniert unabhängig von beidem immer: Im Browser
 **Strg+P → Als PDF speichern**. Das Druck-Stylesheet blendet Navigation, Filter und
 Buttons aus, setzt die Schrift auf 10 pt und bricht sauber um.
+
+Beide Download-Links erscheinen auf der Seite nur, wenn das letzte `./update.sh`
+die jeweilige Datei auch tatsächlich erzeugen konnte.
+
+*Warum kein YAMLResume?* Das wäre eine zusätzliche Node.js-Toolchain gewesen und
+sein Schema kennt von Haus aus keine Talks/Funding/Teaching-Abschnitte — beides
+widerspricht dem Grundsatz „ohne große externe Tools“ dieses Projekts. Die
+Markdown-Ausgabe deckt denselben Bedarf (portables Klartextformat) ohne diese
+Kosten.
 
 ### Wenn kein PDF erscheint
 
@@ -467,7 +481,8 @@ sudo apt install texlive-latex-base texlive-latex-extra texlive-fonts-recommende
 ```
 
 und `./update.sh` erneut ausführen. Bis dahin bleibt der Download-Link auf der Seite
-einfach weg, statt auf eine fehlende Datei zu zeigen.
+einfach weg, statt auf eine fehlende Datei zu zeigen. `cv.md` ist davon nicht
+betroffen — reines Python, kein `pdflatex` nötig, erscheint also immer.
 
 ### Die LaTeX-Quelle selbst
 
@@ -481,12 +496,19 @@ pdflatex cv.tex
 ```
 
 Sie braucht nur Standardpakete (`geometry`, `hyperref`, `xcolor`, `titlesec`,
-`enumitem`, `eurosym`, `newunicodechar`). Wenn du lieber deine bestehende CV-Klasse
-verwendest: Der Generator schreibt die Abschnitte über das Makro `\entry{links}{rechts}`,
-das oben in der Präambel definiert ist — das lässt sich dort umdefinieren, ohne
-den Generator anzufassen. Diese Datei wird bei jedem Build überschrieben; eigene
-Anpassungen gehören in `build_latex_cv()` in `_build/build.py`, nicht in die
-generierte `.tex`-Datei selbst.
+`enumitem`, `textcomp`, `newunicodechar`) — bewusst *keine* Sonderklasse wie
+`curve.cls` und keine Icon-/Font-Pakete (`fontawesome5`, `simpleicons`,
+`cochineal`, …), auch wenn Layout und Kontaktzeile ("Email · ORCID · Scholar · …"
+in Blau/Petrol) genau davon inspiriert sind. Der Grund: eine Sonderklasse plus
+mehrere Zusatzdateien wäre genau die Art fragiler Abhängigkeit, die schon einmal
+zum `eurosym.sty`-Fehler geführt hat — mit reinem `article` + Standardpaketen
+kompiliert es garantiert mit einem nackten `pdflatex`. Wenn du lieber deine
+bestehende CV-Klasse verwendest: Der Generator schreibt die Abschnitte über das
+Makro `\entry{links}{rechts}`, das oben in der Präambel definiert ist — das lässt
+sich dort umdefinieren, ohne den Generator anzufassen. Diese Datei wird bei jedem
+Build überschrieben; eigene Anpassungen gehören in `build_latex_cv()` (PDF) bzw.
+`build_markdown_cv()` (Markdown) in `_build/build.py`, nicht in die generierten
+Dateien selbst.
 
 ---
 
@@ -550,6 +572,49 @@ fertigen Seite. Wenn die Seite ganz ohne externe Anfragen auskommen soll: die be
 
 ---
 
+## Hintergrund-Animation
+
+Eine dezente, ruhige Animation kann hinter dem Seiteninhalt laufen — gesteuert über
+eine einzige Zeile in `_build/config.yaml`:
+
+```yaml
+options:
+  background_animation: "bands"   # oder "none", um sie auszuschalten
+```
+
+Zur Auswahl stehen (alle als eigene Funktion in `_build/assets/bg.js`, dort auch
+kommentiert):
+
+| Schlüssel | Motiv |
+|---|---|
+| `none` | keine Animation |
+| `lattice` | Kristallgitter, leicht driftend |
+| `contours` | wabernde Konturlinien (Potentialfläche) |
+| `orbits` | langsame elliptische Umlaufbahnen |
+| `diffusion` | driftende Punkte in blassem Gitter |
+| `waves` | weiche wandernde Farbverläufe |
+| `wavefunction` | atmende Orbital-Ladungswolken |
+| `bands` | Bandstruktur-artige Dispersionskurven *(aktuell aktiv)* |
+| `mdtraj` | Atome mit thermischer Zitterbewegung + Bahnspur |
+| `interference` | zwei Quellen mit überlagernden Ringwellen |
+| `levels` | diskrete Energieniveaus, gelegentlicher Sprung |
+| `hopping` | H-Atome springen zwischen Zwischengitterplätzen |
+| `front` | fortschreitende Diffusionsfront |
+| `phase` | wachsende/verblassende Keime (Phasenübergang) |
+| `tank` | rhythmisches Be-/Entladen eines Behälters |
+| `dissociation` | H₂-Molekül dissoziiert an einer Oberfläche |
+
+Einfach den Schlüssel ändern und `./update.sh` (bzw. `./publish.sh`) laufen lassen —
+sonst muss nichts angepasst werden, `bg.js` wird unverändert mit ausgeliefert und liest
+die Auswahl zur Laufzeit aus `<body data-bg="…">`.
+
+Technisch: reines `<canvas>`, folgt automatisch der Akzentfarbe (hell/dunkel), pausiert
+im Hintergrundtab, respektiert `prefers-reduced-motion` (dann läuft gar nichts), hat
+`pointer-events:none` und liegt hinter dem gesamten Inhalt. Im Druck-Stylesheet
+(`cv.html` → PDF) ist sie ohnehin ausgeblendet.
+
+---
+
 ## Regelmäßig prüfen
 
 Einmal im Jahr lohnt ein Blick auf:
@@ -573,5 +638,8 @@ Einmal im Jahr lohnt ein Blick auf:
 | Projektbild erscheint nicht | Pfad in `image:` (oder `banner:`) prüfen — er ist relativ zur Vault-Wurzel, nicht zur Notiz. `--verbose` zeigt unter „project images“, wie viele gefunden wurden |
 | `cv.pdf` fehlt, Link auf der CV-Seite auch | `pdflatex` ist nicht installiert, siehe „CV erzeugen“. Die Konsolenausgabe von `./update.sh` sagt es explizit |
 | `pdflatex` meldet einen Fehler | Die ersten Fehlerzeilen stehen in der Konsole, das volle Protokoll in `_build/generated/cv.log`. Meist ein Sonderzeichen, das der Generator noch nicht kennt — kurze Nachricht genügt, das lässt sich in `TEX_UNICODE` in `_build/build.py` ergänzen |
+| `! LaTeX Error: File 'eurosym.sty' not found` (ältere Fehlerprotokolle) | Behoben: `build_latex_cv()` nutzt seit September 2026 `\texteuro` aus dem Standardpaket `textcomp` statt `eurosym`, keine zusätzliche `apt install` nötig. Falls der Fehler doch wieder auftaucht: `_build/build.py` ist nicht aktuell, neu vom Repository holen |
+| `cv.md` fehlt | `markdown_cv: false` in `_build/config.yaml` — auf `true` setzen. Braucht kein `pdflatex`, sollte also praktisch nie fehlen |
 | Kontakt-Link fehlt auf `contact.html`/Startseite | Zugehöriges Feld (`orcid`, `github`, `linkedin`, …) ist in `CV-Profil.md` leer |
 | Impressum erscheint nicht auf `contact.html` | `impressum.enabled` steht auf `false` in `_build/config.yaml` — Absicht, siehe „Kontaktseite & Impressum“ |
+| Hintergrund-Animation erscheint nicht | Entweder `background_animation: "none"` in `_build/config.yaml`, oder das Betriebssystem/der Browser hat „Bewegung reduzieren“ aktiviert — dann bleibt sie absichtlich aus |
