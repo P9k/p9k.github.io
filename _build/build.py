@@ -1063,7 +1063,7 @@ TEX_UNICODE.update({
 TEX_PLAIN = [("\\", r"\textbackslash{}"), ("&", r"\&"), ("%", r"\%"), ("$", r"\$"),
              ("#", r"\#"), ("_", r"\_"), ("{", r"\{"), ("}", r"\}"),
              ("~", r"\textasciitilde{}"), ("^", r"\textasciicircum{}"),
-             ("€", r"\euro{}"),
+             ("€", r"\texteuro{}"),
              ("‐", "-"), ("−", r"\ensuremath{-}"), (" ", "~")]
 
 
@@ -1104,7 +1104,7 @@ def build_latex_cv(cfg, d):
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2.4cm]{geometry}
-\usepackage{eurosym}
+\usepackage{textcomp}
 \usepackage{enumitem}
 \usepackage{newunicodechar}
 %%UNICODE%%
