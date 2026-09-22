@@ -1,0 +1,62 @@
+[
+ {
+  "title": "2025 SoSe TUHH H2-Technik",
+  "institution": "Technische Universität Hamburg (TUHH)",
+  "role": "Co-lecturer",
+  "level": "MSc",
+  "term": "2025 SoSe",
+  "year_start": "2025",
+  "year_end": "2025",
+  "location": "Hamburg"
+ },
+ {
+  "title": "Hydrogen Technology (Lectureship)",
+  "institution": "Technische Hochschule Mittelhessen",
+  "role": "Lecturer",
+  "level": "BSc/MSc",
+  "term": "",
+  "year_start": "2023",
+  "year_end": "",
+  "location": "Gießen"
+ },
+ {
+  "title": "Summer School on Computational Chemistry — Tutor",
+  "institution": "University of Mauritius",
+  "role": "Tutor",
+  "level": "PhD/Postdoc",
+  "term": "",
+  "year_start": "2019",
+  "year_end": "2019",
+  "location": "Reduit"
+ },
+ {
+  "title": "Modern Methods in Quantum Chemistry (Workshop Series)",
+  "institution": "Various universities",
+  "role": "Workshop lecturer",
+  "level": "PhD/Postdoc",
+  "term": "",
+  "year_start": "2014",
+  "year_end": "2019",
+  "location": "Hyderabad, Dunedin, Denton, Mariapfarr, Mauritius"
+ },
+ {
+  "title": "Lab Course Theoretical Chemistry (redesign)",
+  "institution": "Philipps-Universität Marburg",
+  "role": "Teaching assistant",
+  "level": "BSc/MSc",
+  "term": "",
+  "year_start": "2010",
+  "year_end": "2014",
+  "location": "Marburg"
+ },
+ {
+  "title": "Lab Courses Physical Chemistry",
+  "institution": "Philipps-Universität Marburg",
+  "role": "Student assistant",
+  "level": "BSc",
+  "term": "",
+  "year_start": "2007",
+  "year_end": "2010",
+  "location": "Marburg"
+ }
+]

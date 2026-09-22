@@ -1,0 +1,92 @@
+[
+ {
+  "title": "Sustainable TiFe Generation from Secondary Sources",
+  "funder": "BMBF (Germany)",
+  "programme": "Federal funding",
+  "role": "Principal Investigator",
+  "amount_eur": "1500000",
+  "grant_number": "",
+  "year": "2024",
+  "duration": "3 years"
+ },
+ {
+  "title": "HIDA Visiting Researcher Grant (with S. Faouri)",
+  "funder": "Helmholtz Association",
+  "programme": "Helmholtz Information & Data Science Academy (HIDA)",
+  "role": "Host",
+  "amount_eur": "10000",
+  "grant_number": "",
+  "year": "2024",
+  "duration": "2 months"
+ },
+ {
+  "title": "HIDA Visiting Researcher Grant (with A. Rowberg)",
+  "funder": "Helmholtz Association",
+  "programme": "Helmholtz Information & Data Science Academy (HIDA)",
+  "role": "Host",
+  "amount_eur": "15000",
+  "grant_number": "",
+  "year": "2023",
+  "duration": "3 months"
+ },
+ {
+  "title": "Generating Hydrogen Storage Materials from New Zealand Resources",
+  "funder": "BMBF (Germany)",
+  "programme": "Federal funding",
+  "role": "Coordinator",
+  "amount_eur": "400000",
+  "grant_number": "03SF0691",
+  "year": "2022",
+  "duration": "3 years"
+ },
+ {
+  "title": "Establishing a German-New Zealand Research Centre for Green Hydrogen",
+  "funder": "BMBF (Germany)",
+  "programme": "Federal funding",
+  "role": "Coordinator",
+  "amount_eur": "760000",
+  "grant_number": "",
+  "year": "2021",
+  "duration": "5 years"
+ },
+ {
+  "title": "HIDA Visiting Scientist Grant (with M. Selzer)",
+  "funder": "Helmholtz Association",
+  "programme": "Helmholtz Information & Data Science Academy (HIDA)",
+  "role": "Fellow",
+  "amount_eur": "10000",
+  "grant_number": "",
+  "year": "2021",
+  "duration": "3 months"
+ },
+ {
+  "title": "Humboldt Return Fellowship",
+  "funder": "Alexander von Humboldt Foundation",
+  "programme": "Feodor Lynen Return Fellowship",
+  "role": "Fellow",
+  "amount_eur": "47000",
+  "grant_number": "",
+  "year": "2017",
+  "duration": "1 year"
+ },
+ {
+  "title": "Computation of highly accurate interatomic potentials of heavy and superheavy elements",
+  "funder": "New Zealand eScience Infrastructure (NeSI)",
+  "programme": "HPC allocation",
+  "role": "Principal Investigator",
+  "amount_eur": "117000",
+  "grant_number": "",
+  "year": "2016",
+  "duration": "1.5 years"
+ },
+ {
+  "title": "Hochpräzise quantenchemische Simulationen von atomaren und molekularen Phasen unter extremen Bedingungen",
+  "funder": "Alexander von Humboldt Foundation",
+  "programme": "Feodor Lynen Research Fellowship",
+  "role": "Fellow",
+  "amount_eur": "85000",
+  "grant_number": "",
+  "year": "2014",
+  "duration": "2 years"
+ }
+]
