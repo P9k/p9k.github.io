@@ -1549,7 +1549,7 @@ def build_contact(cfg, d):
     addr = impressum_address(cfg, d)
     if addr:
         out.append(section("Postal address", "",
-                           "<p>%s</p><p><a href=\"impressum.html\">Impressum &amp; Datenschutz</a></p>"
+                           "<p>%s</p><p><a href=\"impressum.html\">Legal notice &amp; Privacy</a></p>"
                            % "<br>".join(E(a) for a in addr)))
 
     if not out:
@@ -1589,16 +1589,16 @@ def build_legal(cfg, d):
         parts.append("<h3>Verantwortlich f&uuml;r den Inhalt nach &sect; 18 Abs. 2 MStV</h3><p>%s, Anschrift wie oben</p>" % E(name))
         if S(imp.get("extra")):
             parts.append(md_block(S(imp.get("extra"))))
-        out.append(section("Impressum", "", '<div class="legal">%s</div>' % "".join(parts), anchor="impressum"))
+        out.append(section("Legal notice", "", '<div class="legal">%s</div>' % "".join(parts), anchor="impressum"))
     tpl = os.path.join(HERE, "templates", "datenschutz.html")
     if os.path.isfile(tpl):
         with io.open(tpl, encoding="utf-8") as fh:
             txt = re.sub(r"<!--.*?-->", "", fh.read(), flags=re.S)
         txt = (txt.replace("{{name}}", E(name)).replace("{{address}}", "<br>".join(E(a) for a in addr))
                   .replace("{{email}}", mail))
-        out.append(section("Datenschutzerklärung", "",
+        out.append(section("Privacy policy", "",
                            '<div class="legal">%s</div>' % txt, anchor="datenschutz"))
-    return page(cfg, "impressum.html", "Impressum & Datenschutz", "\n".join(out))
+    return page(cfg, "impressum.html", "Legal notice & Privacy", "\n".join(out))
 
 
 # ===========================================================================
