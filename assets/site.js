@@ -31,7 +31,12 @@
       var href = links[i].getAttribute("href");
       if (!href || /^([a-z]+:|\/\/|#)/i.test(href)) continue;   // external, mail, anchors
       if (!/\.html([#?]|$)/.test(href)) continue;               // only site pages
-      links[i].setAttribute("href", href.split("#")[0] + "#theme=" + theme);
+      // keep any other hash part (e.g. gallery.html#s=<structure>)
+      var parts = href.split("#"), keep = (parts[1] || "").split("&").filter(function (x) {
+        return x && !/^theme=/.test(x);
+      });
+      keep.push("theme=" + theme);
+      links[i].setAttribute("href", parts[0] + "#" + keep.join("&"));
     }
   }
 

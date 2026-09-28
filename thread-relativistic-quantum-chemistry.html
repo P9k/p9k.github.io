@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relativistic quantum chemistry</title>
+<meta name="description" content="Multiscale simulation of metal hydrides for hydrogen storage.">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="Paul Jerabek" href="feed.xml">
+<meta name="color-scheme" content="light dark">
+<!-- Apply the stored theme before the first paint, so pages never flash.
+     Order: link hash (the only channel that survives file:// browsing,
+     where each page gets its own storage area) -> localStorage -> system. -->
+<script>(function(){var d=document.documentElement,t=null;
+try{var m=/(?:^|[#?&])theme=(dark|light)/.exec(location.hash+location.search);if(m){t=m[1];}}catch(e){}
+if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
+if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
+
+</head>
+<body class="page-thread" data-bg="bands" data-bg-motion="1">
+
+<canvas id="bg-anim" aria-hidden="true"></canvas>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="index.html">Paul Jerabek<span> &middot; Dr. rer. nat.</span></a>
+  <nav class="main">
+      <a class="cur" href="index.html">about</a>
+      <a href="publications.html">publications</a>
+      <a href="projects.html">projects</a>
+      <a href="talks.html">talks</a>
+      <a href="teaching.html">teaching</a>
+      <a href="gallery.html">gallery</a>
+      <a href="cv.html">cv</a>
+      <a href="contact.html">contact</a>
+      <button class="themebtn" id="themebtn" type="button" title="Switch colour theme" aria-label="Switch colour theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+      </button>
+  </nav>
+</div></header>
+
+<main id="main">
+<section class="hero"><div class="wrap"><a class="more" href="index.html#research">&larr; Research</a><div class="ic threadicon">Og</div><h1 class="name">Relativistic quantum chemistry</h1><div class="chips"><span class="chip">Relativistic effects</span><span class="chip">Superheavy elements</span></div></div></section>
+<section><div class="wrap">
+<h2 class="sec">About this research</h2>
+<p>Quantifying the relativistic effects of physics and chemistry of heavy and superheavy elements, from gold to oganesson, using post-HF methods, DFT, MD/MC.</p>
+</div></section>
+<section><div class="wrap">
+<h2 class="sec">Related publications</h2>
+<div class="pub" data-year="2026" data-topics="actinides, relativistic effects, bonding analysis, dft, uranium" data-cat="theory" data-search="relativistic effects are crucial for uranium-phosphorus bonding: a dft study of cyclopentadienyluranium-phosphine complexes j.-e. ahrens, p. jerabek, l. vondung mol. phys. actinides, relativistic effects, bonding analysis, dft, uranium"><div class="yr">2026</div><div><p class="t">Relativistic effects are crucial for uranium-phosphorus bonding: a DFT study of cyclopentadienyluranium-phosphine complexes<span class="badge">open access</span></p><p class="a">J.-E. Ahrens, <strong>P. Jerabek</strong>, L. Vondung</p><p class="j"><i>Mol. Phys.</i>, e2611400 (2026) &middot; <a href="https://doi.org/10.1080/00268976.2025.2611400" rel="noopener">doi:10.1080/00268976.2025.2611400</a> &middot; <button class="bibtn" type="button" data-key="Ahrens2026a">BibTeX</button></p><pre class="bib" id="bib-Ahrens2026a" hidden>@article{Ahrens2026a,
+  author   = {J.-E. Ahrens and P. Jerabek and L. Vondung},
+  title    = {{Relativistic effects are crucial for uranium-phosphorus bonding: a DFT study of cyclopentadienyluranium-phosphine complexes}},
+  journal  = {Mol. Phys.},
+  year     = {2026},
+  pages    = {e2611400},
+  doi      = {10.1080/00268976.2025.2611400},
+}</pre></div></div><div class="pub" data-year="2024" data-topics="phase transitions, relativistic effects, solid state, gold" data-cat="theory" data-search="tipping the balance between the bcc and fcc phase within the alkali and coinage metal groups a. robles-navarro, p. jerabek, p. schwerdtfeger angew. chem. int. ed. phase transitions, relativistic effects, solid state, gold"><div class="yr">2024</div><div><p class="t">Tipping the balance between the bcc and fcc phase within the alkali and coinage metal groups<span class="badge">open access</span></p><p class="a">A. Robles-Navarro, <strong>P. Jerabek</strong>, P. Schwerdtfeger</p><p class="j"><i>Angew. Chem. Int. Ed.</i>, <b>63</b>, e202313679 (2024) &middot; <a href="https://doi.org/10.1002/anie.202313679" rel="noopener">doi:10.1002/anie.202313679</a> &middot; <button class="bibtn" type="button" data-key="Roblesnavarro2024a">BibTeX</button></p><pre class="bib" id="bib-Roblesnavarro2024a" hidden>@article{Roblesnavarro2024a,
+  author   = {A. Robles-Navarro and P. Jerabek and P. Schwerdtfeger},
+  title    = {{Tipping the balance between the bcc and fcc phase within the alkali and coinage metal groups}},
+  journal  = {Angew. Chem. Int. Ed.},
+  year     = {2024},
+  volume   = {63},
+  pages    = {e202313679},
+  doi      = {10.1002/anie.202313679},
+}</pre></div></div><div class="pub" data-year="2022" data-topics="gold, relativistic effects, bonding analysis" data-cat="theory" data-search="relativistic effects stabilize unusual gold(ii) sulfate structure via aurophilic interactions p. jerabek, a. santhosh, p. schwerdtfeger inorg. chem. gold, relativistic effects, bonding analysis"><div class="yr">2022</div><div><p class="t">Relativistic Effects Stabilize Unusual Gold(II) Sulfate Structure via Aurophilic Interactions</p><p class="a"><strong>P. Jerabek</strong>, A. Santhosh, P. Schwerdtfeger</p><p class="j"><i>Inorg. Chem.</i>, <b>61</b>, 13077-13084 (2022) &middot; <a href="https://doi.org/10.1021/acs.inorgchem.2c01512" rel="noopener">doi:10.1021/acs.inorgchem.2c01512</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2022h">BibTeX</button></p><pre class="bib" id="bib-Jerabek2022h" hidden>@article{Jerabek2022h,
+  author   = {P. Jerabek and A. Santhosh and P. Schwerdtfeger},
+  title    = {{Relativistic Effects Stabilize Unusual Gold(II) Sulfate Structure via Aurophilic Interactions}},
+  journal  = {Inorg. Chem.},
+  year     = {2022},
+  volume   = {61},
+  pages    = {13077-13084},
+  doi      = {10.1021/acs.inorgchem.2c01512},
+}</pre></div></div><div class="pub" data-year="2022" data-topics="superheavy elements, relativistic effects, bonding analysis" data-cat="theory" data-search="from the gas phase to the solid state: the chemical bonding in the superheavy element flerovium e. florez, o. r. smits, j.-m. mewes, p. jerabek, p. schwerdtfeger j. chem. phys. superheavy elements, relativistic effects, bonding analysis"><div class="yr">2022</div><div><p class="t">From the gas phase to the solid state: The chemical bonding in the superheavy element flerovium</p><p class="a">E. Florez, O. R. Smits, J.-M. Mewes, <strong>P. Jerabek</strong>, P. Schwerdtfeger</p><p class="j"><i>J. Chem. Phys.</i>, <b>157</b>, 64304 (2022) &middot; <a href="https://doi.org/10.1063/5.0097642" rel="noopener">doi:10.1063/5.0097642</a> &middot; <button class="bibtn" type="button" data-key="Florez2022g">BibTeX</button></p><pre class="bib" id="bib-Florez2022g" hidden>@article{Florez2022g,
+  author   = {E. Florez and O. R. Smits and J.-M. Mewes and P. Jerabek and P. Schwerdtfeger},
+  title    = {{From the gas phase to the solid state: The chemical bonding in the superheavy element flerovium}},
+  journal  = {J. Chem. Phys.},
+  year     = {2022},
+  volume   = {157},
+  pages    = {64304},
+  doi      = {10.1063/5.0097642},
+}</pre></div></div><div class="pub" data-year="2020" data-topics="superheavy elements, relativistic effects, noble gases, phase transitions, oganesson" data-cat="theory" data-search="oganesson: a noble gas element that is neither noble nor a gas o. r. smits, j. mewes, p. jerabek, p. schwerdtfeger angew. chem. int. ed. superheavy elements, relativistic effects, noble gases, phase transitions, oganesson"><div class="yr">2020</div><div><p class="t">Oganesson: A Noble Gas Element That Is Neither Noble Nor a Gas</p><p class="a">O. R. Smits, J. Mewes, <strong>P. Jerabek</strong>, P. Schwerdtfeger</p><p class="j"><i>Angew. Chem. Int. Ed.</i>, <b>59</b>, 23636–23640 (2020) &middot; <a href="https://doi.org/10.1002/anie.202011976" rel="noopener">doi:10.1002/anie.202011976</a> &middot; <button class="bibtn" type="button" data-key="Smits2020d">BibTeX</button></p><pre class="bib" id="bib-Smits2020d" hidden>@article{Smits2020d,
+  author   = {O. R. Smits and J. Mewes and P. Jerabek and P. Schwerdtfeger},
+  title    = {{Oganesson: A Noble Gas Element That Is Neither Noble Nor a Gas}},
+  journal  = {Angew. Chem. Int. Ed.},
+  year     = {2020},
+  volume   = {59},
+  pages    = {23636–23640},
+  doi      = {10.1002/anie.202011976},
+}</pre></div></div><div class="pub" data-year="2020" data-topics="noble gases, relativistic effects, coupled cluster, monte carlo, phase transitions" data-cat="theory" data-search="first-principles melting of krypton and xenon based on many-body relativistic coupled-cluster interaction potentials o. r. smits, p. jerabek, e. pahl, p. schwerdtfeger phys. rev. b noble gases, relativistic effects, coupled cluster, monte carlo, phase transitions"><div class="yr">2020</div><div><p class="t">First-principles melting of krypton and xenon based on many-body relativistic coupled-cluster interaction potentials</p><p class="a">O. R. Smits, <strong>P. Jerabek</strong>, E. Pahl, P. Schwerdtfeger</p><p class="j"><i>Phys. Rev. B</i>, <b>101</b>, 104103 (2020) &middot; <a href="https://doi.org/10.1103/PhysRevB.101.104103" rel="noopener">doi:10.1103/PhysRevB.101.104103</a> &middot; <button class="bibtn" type="button" data-key="Smits2020b">BibTeX</button></p><pre class="bib" id="bib-Smits2020b" hidden>@article{Smits2020b,
+  author   = {O. R. Smits and P. Jerabek and E. Pahl and P. Schwerdtfeger},
+  title    = {{First-principles melting of krypton and xenon based on many-body relativistic coupled-cluster interaction potentials}},
+  journal  = {Phys. Rev. B},
+  year     = {2020},
+  volume   = {101},
+  pages    = {104103},
+  doi      = {10.1103/PhysRevB.101.104103},
+}</pre></div></div><div class="pub" data-year="2019" data-topics="superheavy elements, relativistic effects, noble gases, oganesson" data-cat="theory" data-search="oganesson is a semiconductor: on the relativistic band-gap narrowing in the heaviest noble-gas solids j.-m. mewes, p. jerabek, o. r. smits, p. schwerdtfeger angew. chem. int. ed. superheavy elements, relativistic effects, noble gases, oganesson"><div class="yr">2019</div><div><p class="t">Oganesson Is a Semiconductor: On the Relativistic Band-Gap Narrowing in the Heaviest Noble-Gas Solids<span class="badge">open access</span></p><p class="a">J.-M. Mewes, <strong>P. Jerabek</strong>, O. R. Smits, P. Schwerdtfeger</p><p class="j"><i>Angew. Chem. Int. Ed.</i>, <b>58</b>, 14260–14264 (2019) &middot; <a href="https://doi.org/10.1002/anie.201908327" rel="noopener">doi:10.1002/anie.201908327</a> &middot; <button class="bibtn" type="button" data-key="Mewes2019c">BibTeX</button></p><pre class="bib" id="bib-Mewes2019c" hidden>@article{Mewes2019c,
+  author   = {J.-M. Mewes and P. Jerabek and O. R. Smits and P. Schwerdtfeger},
+  title    = {{Oganesson Is a Semiconductor: On the Relativistic Band-Gap Narrowing in the Heaviest Noble-Gas Solids}},
+  journal  = {Angew. Chem. Int. Ed.},
+  year     = {2019},
+  volume   = {58},
+  pages    = {14260–14264},
+  doi      = {10.1002/anie.201908327},
+}</pre></div></div><div class="pub" data-year="2019" data-topics="superheavy elements, relativistic effects, noble gases, coupled cluster, oganesson" data-cat="theory" data-search="solid oganesson via a many-body interaction expansion based on relativistic coupled-cluster theory and from plane-wave relativistic density functional theory p. jerabek, o. r. smits, j.-m. mewes, k. a. peterson, p. schwerdtfeger j. phys. chem. a superheavy elements, relativistic effects, noble gases, coupled cluster, oganesson"><div class="yr">2019</div><div><p class="t">Solid Oganesson via a Many-Body Interaction Expansion Based on Relativistic Coupled-Cluster Theory and from Plane-Wave Relativistic Density Functional Theory</p><p class="a"><strong>P. Jerabek</strong>, O. R. Smits, J.-M. Mewes, K. A. Peterson, P. Schwerdtfeger</p><p class="j"><i>J. Phys. Chem. A</i>, <b>123</b>, 4201–4211 (2019) &middot; <a href="https://doi.org/10.1021/acs.jpca.9b01947" rel="noopener">doi:10.1021/acs.jpca.9b01947</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2019b">BibTeX</button></p><pre class="bib" id="bib-Jerabek2019b" hidden>@article{Jerabek2019b,
+  author   = {P. Jerabek and O. R. Smits and J.-M. Mewes and K. A. Peterson and P. Schwerdtfeger},
+  title    = {{Solid Oganesson via a Many-Body Interaction Expansion Based on Relativistic Coupled-Cluster Theory and from Plane-Wave Relativistic Density Functional Theory}},
+  journal  = {J. Phys. Chem. A},
+  year     = {2019},
+  volume   = {123},
+  pages    = {4201–4211},
+  doi      = {10.1021/acs.jpca.9b01947},
+}</pre></div></div><div class="pub" data-year="2018" data-topics="noble gases, relativistic effects, monte carlo, phase transitions, radon" data-cat="theory" data-search="a hundred-year-old experiment re-evaluated: accurate ab-initio monte-carlo simulations of the melting of radon o. smits, p. jerabek, e. pahl, p. schwerdtfeger angew. chem. int. ed. noble gases, relativistic effects, monte carlo, phase transitions, radon"><div class="yr">2018</div><div><p class="t">A Hundred-Year-Old Experiment Re-evaluated: Accurate Ab-Initio Monte-Carlo Simulations of the Melting of Radon</p><p class="a">O. Smits, <strong>P. Jerabek</strong>, E. Pahl, P. Schwerdtfeger</p><p class="j"><i>Angew. Chem. Int. Ed.</i>, <b>57</b>, 9961–9964 (2018) &middot; <a href="https://doi.org/10.1002/anie.201803353" rel="noopener">doi:10.1002/anie.201803353</a> &middot; <button class="bibtn" type="button" data-key="Smits2018g">BibTeX</button></p><pre class="bib" id="bib-Smits2018g" hidden>@article{Smits2018g,
+  author   = {O. Smits and P. Jerabek and E. Pahl and P. Schwerdtfeger},
+  title    = {{A Hundred-Year-Old Experiment Re-evaluated: Accurate Ab-Initio Monte-Carlo Simulations of the Melting of Radon}},
+  journal  = {Angew. Chem. Int. Ed.},
+  year     = {2018},
+  volume   = {57},
+  pages    = {9961–9964},
+  doi      = {10.1002/anie.201803353},
+}</pre></div></div><div class="pub" data-year="2018" data-topics="transition-metal complexes, gold, relativistic effects" data-cat="theory" data-search="tipping the balance between ligand and metal protonation due to relativistic effects: unusually high proton affinity in gold(i) pincer complexes p. jerabek, l. vondung, p. schwerdtfeger chem. eur. j. transition-metal complexes, gold, relativistic effects"><div class="yr">2018</div><div><p class="t">Tipping the Balance between Ligand and Metal Protonation due to Relativistic Effects: Unusually High Proton Affinity in Gold(I) Pincer Complexes</p><p class="a"><strong>P. Jerabek</strong>, L. Vondung, P. Schwerdtfeger</p><p class="j"><i>Chem. Eur. J.</i>, <b>24</b>, 6047–6051 (2018) &middot; <a href="https://doi.org/10.1002/chem.201800755" rel="noopener">doi:10.1002/chem.201800755</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2018e">BibTeX</button></p><pre class="bib" id="bib-Jerabek2018e" hidden>@article{Jerabek2018e,
+  author   = {P. Jerabek and L. Vondung and P. Schwerdtfeger},
+  title    = {{Tipping the Balance between Ligand and Metal Protonation due to Relativistic Effects: Unusually High Proton Affinity in Gold(I) Pincer Complexes}},
+  journal  = {Chem. Eur. J.},
+  year     = {2018},
+  volume   = {24},
+  pages    = {6047–6051},
+  doi      = {10.1002/chem.201800755},
+}</pre></div></div><div class="pub" data-year="2018" data-topics="noble gases, relativistic effects, coupled cluster, xenon" data-cat="theory" data-search="a relativistic coupled-cluster interaction potential and rovibrational constants for the xenon dimer p. jerabek, o. smits, e. pahl, p. schwerdtfeger mol. phys. noble gases, relativistic effects, coupled cluster, xenon"><div class="yr">2018</div><div><p class="t">A relativistic coupled-cluster interaction potential and rovibrational constants for the xenon dimer</p><p class="a"><strong>P. Jerabek</strong>, O. Smits, E. Pahl, P. Schwerdtfeger</p><p class="j"><i>Mol. Phys.</i>, <b>116</b>, 1–8 (2018) &middot; <a href="https://doi.org/10.1080/00268976.2017.1359347" rel="noopener">doi:10.1080/00268976.2017.1359347</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2018d">BibTeX</button></p><pre class="bib" id="bib-Jerabek2018d" hidden>@article{Jerabek2018d,
+  author   = {P. Jerabek and O. Smits and E. Pahl and P. Schwerdtfeger},
+  title    = {{A relativistic coupled-cluster interaction potential and rovibrational constants for the xenon dimer}},
+  journal  = {Mol. Phys.},
+  year     = {2018},
+  volume   = {116},
+  pages    = {1–8},
+  doi      = {10.1080/00268976.2017.1359347},
+}</pre></div></div><div class="pub" data-year="2018" data-topics="relativistic effects, coupled cluster, palladium" data-cat="theory" data-search="static dipole polarizability of palladium from relativistic coupled-cluster theory p. jerabek, p. schwerdtfeger, j. k. nagle phys. rev. a relativistic effects, coupled cluster, palladium"><div class="yr">2018</div><div><p class="t">Static dipole polarizability of palladium from relativistic coupled-cluster theory</p><p class="a"><strong>P. Jerabek</strong>, P. Schwerdtfeger, J. K. Nagle</p><p class="j"><i>Phys. Rev. A</i>, <b>98</b>, 12508 (2018) &middot; <a href="https://doi.org/10.1103/PhysRevA.98.012508" rel="noopener">doi:10.1103/PhysRevA.98.012508</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2018c">BibTeX</button></p><pre class="bib" id="bib-Jerabek2018c" hidden>@article{Jerabek2018c,
+  author   = {P. Jerabek and P. Schwerdtfeger and J. K. Nagle},
+  title    = {{Static dipole polarizability of palladium from relativistic coupled-cluster theory}},
+  journal  = {Phys. Rev. A},
+  year     = {2018},
+  volume   = {98},
+  pages    = {12508},
+  doi      = {10.1103/PhysRevA.98.012508},
+}</pre></div></div><div class="pub" data-year="2018" data-topics="superheavy elements, relativistic effects, bonding analysis, oganesson" data-cat="theory" data-search="electron and nucleon localization functions of oganesson: approaching the thomas-fermi limit p. jerabek, b. schuetrumpf, p. schwerdtfeger, w. nazarewicz phys. rev. lett. superheavy elements, relativistic effects, bonding analysis, oganesson"><div class="yr">2018</div><div><p class="t">Electron and nucleon localization functions of oganesson: Approaching the Thomas-Fermi limit</p><p class="a"><strong>P. Jerabek</strong>, B. Schuetrumpf, P. Schwerdtfeger, W. Nazarewicz</p><p class="j"><i>Phys. Rev. Lett.</i>, <b>120</b>, 53001 (2018) &middot; <a href="https://doi.org/10.1103/PhysRevLett.120.053001" rel="noopener">doi:10.1103/PhysRevLett.120.053001</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2018b">BibTeX</button></p><pre class="bib" id="bib-Jerabek2018b" hidden>@article{Jerabek2018b,
+  author   = {P. Jerabek and B. Schuetrumpf and P. Schwerdtfeger and W. Nazarewicz},
+  title    = {{Electron and nucleon localization functions of oganesson: Approaching the Thomas-Fermi limit}},
+  journal  = {Phys. Rev. Lett.},
+  year     = {2018},
+  volume   = {120},
+  pages    = {53001},
+  doi      = {10.1103/PhysRevLett.120.053001},
+}</pre></div></div><div class="pub" data-year="2017" data-topics="transition-metal complexes, gold, relativistic effects, bonding analysis" data-cat="theory" data-search="influence of relativistic effects on bonding modes in m(ii) dinuclear complexes (m = au, ag, and cu) p. jerabek, b. von der esch, h. schmidbaur, p. schwerdtfeger inorg. chem. transition-metal complexes, gold, relativistic effects, bonding analysis"><div class="yr">2017</div><div><p class="t">Influence of Relativistic Effects on Bonding Modes in M(II) Dinuclear Complexes (M = Au, Ag, and Cu)</p><p class="a"><strong>P. Jerabek</strong>, B. von der Esch, H. Schmidbaur, P. Schwerdtfeger</p><p class="j"><i>Inorg. Chem.</i>, <b>56</b>, 14624–14631 (2017) &middot; <a href="https://doi.org/10.1021/acs.inorgchem.7b02434" rel="noopener">doi:10.1021/acs.inorgchem.7b02434</a> &middot; <button class="bibtn" type="button" data-key="Jerabek2017a">BibTeX</button></p><pre class="bib" id="bib-Jerabek2017a" hidden>@article{Jerabek2017a,
+  author   = {P. Jerabek and B. von der Esch and H. Schmidbaur and P. Schwerdtfeger},
+  title    = {{Influence of Relativistic Effects on Bonding Modes in M(II) Dinuclear Complexes (M = Au, Ag, and Cu)}},
+  journal  = {Inorg. Chem.},
+  year     = {2017},
+  volume   = {56},
+  pages    = {14624–14631},
+  doi      = {10.1021/acs.inorgchem.7b02434},
+}</pre></div></div>
+</div></section>
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; 2026 Paul Jerabek &middot; Geesthacht, Germany</span>
+  <span class="flinks"><a href="impressum.html">Impressum</a> &middot; <a href="impressum.html#datenschutz">Datenschutz</a> &middot; Last updated 28 September 2026</span>
+</div></footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/bg.js" defer></script>
+
+</body>
+</html>

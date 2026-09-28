@@ -176,6 +176,9 @@ website/
 ├── index.html                ← ab hier alles generiert
 ├── publications.html
 ├── projects.html
+├── project-<slug>.html        Eine Unterseite pro Projekt (aus den Kacheln verlinkt)
+├── thread-<slug>.html         Eine Unterseite pro Forschungs-Kachel auf der Startseite
+├── gallery.html              Strukturgalerie (eine Struktur pro Paper)
 ├── talks.html
 ├── teaching.html
 ├── cv.html                   Druckfertig: Strg+P → als PDF speichern
@@ -217,7 +220,7 @@ veröffentlichten Seite automatisch aus.
 | Beruflicher Werdegang | `position` | `20-Arbeit/Organisation/Karriere/Stationen` |
 | Ausbildung | `education` | `20-Arbeit/Organisation/Karriere/Ausbildung` |
 | Gremien, Reviewing, Outreach | `service` | `20-Arbeit/Organisation/Karriere/Service` |
-| Forschungsschwerpunkte (3 Kacheln) | `research-thread` | `20-Arbeit/Organisation/Karriere/Forschung` |
+| Forschungsschwerpunkte (Kacheln) | `research-thread` | `20-Arbeit/Organisation/Karriere/Forschung` |
 | Meldungen auf der Startseite | `news` | `20-Arbeit/Organisation/Karriere/News` |
 | Stammdaten, Kontakt, Kennzahlen | `cv-profile` | `20-Arbeit/Organisation/Karriere/CV-Profil.md` |
 
@@ -265,10 +268,21 @@ runningnumber: 62          # bestimmt die Reihenfolge innerhalb eines Jahres
 topics: Thermodynamics, TiFe
 openaccess: true           # zeigt das Open-Access-Etikett
 status: Published          # nur das erscheint auf der Website
+project: GreenH2Metals, Metal hydride design   # optional, siehe unten
 ```
 
 Die Autorenliste wird an `P. Jerabek` automatisch fett gesetzt
 (Muster: `highlight_author` in der Konfiguration).
+
+**`project:`** ordnet ein Paper gezielt einem oder mehreren Projekten
+und/oder Forschungs-Kacheln zu (mehrere Werte durch Komma getrennt oder als
+YAML-Liste). Das ist der präzise, manuelle Weg — zusätzlich zur
+automatischen Zuordnung über gemeinsame `topics:`, die weiterhin läuft.
+Ein Wert kann alles sein, womit du das Ziel eindeutig benennst: der
+Projekt-`acronym:`, der `title:` der Projekt- oder Forschungs-Kachel-Notiz,
+oder der Dateiname. Groß-/Kleinschreibung ist egal. Details und wie sich
+das mit Projekt-Unterseiten und Forschungs-Kacheln verzahnt: siehe
+„Projekt" und „Forschungsschwerpunkte" weiter unten.
 
 ### Vortrag, Poster, Seminar, Workshop
 
@@ -337,6 +351,42 @@ Beim nächsten `./update.sh` wird das Bild nach `assets/img/projects/<projekt>.j
 kopiert und oben auf der Projektkarte angezeigt (Format 16:9, zugeschnitten). Ein
 Projekt ohne Bild und ohne Banner zeigt einfach keins — nichts bricht.
 
+**Projektkacheln sind klickbar** (auf der Startseite und auf `projects.html`) und
+führen zu einer eigenen Unterseite `project-<slug>.html` mit dem vollen Notiztext,
+einer optionalen Link-Zeile und den passenden Publikationen. Nichts davon braucht
+eine neue Notiz oder eine zweite Pflegequelle — alles kommt aus derselben
+Projektnotiz:
+
+```yaml
+# --- optional, für die Projekt-Unterseite ---
+links:
+  - ["Projektwebsite", "https://example.org/greenh2metals"]
+  - ["Förderdatenbank-Eintrag", "https://gepris.dfg.de/gepris/projekt/…"]
+related_papers:
+  - "Teilstring aus einem Publikationstitel"
+```
+
+- Der **Freitext-Body** der Notiz (alles unter dem YAML-Header) erscheint als
+  „About this project“ auf der Unterseite — genau wie beim CV-Profil (`## bio`)
+  wird hier einfach der vorhandene Notiztext verwendet, nichts extra pflegen.
+- **`links:`** ist optional, gleiche Form wie `nav:` in `config.yaml`
+  (`[Beschriftung, URL]`), erscheint als Link-Zeile unter der Beschreibung.
+- **Passende Publikationen** erscheinen auf einer Projektseite nur, wenn sie
+  dem Projekt ausdrücklich zugeordnet sind (Projekte laufen zeitlich begrenzt,
+  gemeinsame Themen wären hier zu ungenau). Zwei Wege, ein Treffer reicht:
+  1. **Über `project:` auf dem Paper selbst** — trägst du im Paper
+     `project: GreenH2Metals` ein (Projekt-`acronym:`, `title:` oder
+     Dateiname, mehrere durch Komma getrennt), erscheint es hier. Das ist
+     der Normalfall.
+  2. **Manuell von der Projektseite aus über `related_papers:`** — eine
+     Liste von Textstücken, die im Titel der gewünschten Publikation
+     vorkommen (auch nur ein paar Wörter reichen). Praktisch, wenn du nicht
+     extra die Papernotiz aufmachen willst.
+- Beides (Links wie Publikations-Zuordnung) ist rein additiv: eine Projektnotiz
+  ganz ohne `links:`/`related_papers:` und ohne Body-Text bekommt trotzdem eine
+  funktionierende, wenn auch knappe, Unterseite (nur Titel, Zeitraum,
+  Kurzbeschreibung).
+
 ### Förderung
 
 ```yaml
@@ -402,6 +452,116 @@ Datum sortiert:
 
 Für eine Meldung, die nicht mit einer Publikation zusammenhängt (ein Vortrag, eine
 neue Förderung, ein Meilenstein), reicht also eine kurze `news`-Notiz.
+
+### Forschungsschwerpunkte (Kacheln auf der Startseite)
+
+Notizen vom Typ `research-thread` in
+`20-Arbeit/Organisation/Karriere/Forschung`:
+
+```yaml
+type: research-thread
+title: Metal hydride design
+icon: H₂                # kurzes Symbol/Kürzel, erscheint als Icon
+order: 1                 # Reihenfolge der Kacheln
+topics: TiFe, Metal hydrides, Hydrogen storage
+public: true
+links:                    # optional, wie bei Projekten
+  - ["Gruppenseite", "https://example.org"]
+```
+
+Der Fließtext der Notiz ist die Ein-Zeilen-Beschreibung auf der Kachel selbst.
+
+Jede Kachel ist klickbar und führt auf eine eigene Unterseite
+(`thread-<slug>.html`) — genau wie bei Projekten, mit Freitext, optionaler
+Link-Zeile und den zugeordneten Publikationen. Die Zuordnung läuft über
+dieselben zwei Wege wie bei Projekten:
+
+1. **Automatisch über `topics:`** — ein Paper mit mindestens einem
+   gemeinsamen Tag erscheint auf der Kachel-Unterseite.
+2. **Präzise über `project:` auf dem Paper** — dasselbe Feld wie bei
+   Projekten (siehe „Publikation“ weiter oben), nur dass der Wert hier der
+   `title:` der Forschungs-Kachel ist, z. B.
+   `project: Metal hydride design`. Ein Paper kann so gleichzeitig einem
+   Projekt UND einer oder mehreren Forschungs-Kacheln zugeordnet sein.
+
+Optional `related_papers:` auf der Kachel-Notiz selbst funktioniert ebenfalls,
+genau wie bei Projekten.
+
+**Externer Link statt Unterseite:** Setzt eine Kachel-Notiz `link:` (eine
+URL oder eine andere Seite der Website, z. B. `publications.html`), verlinkt
+die Kachel stattdessen dorthin — keine eigene Unterseite. Ohne `link:` (der
+Normalfall) bekommt jede Kachel automatisch ihre eigene Unterseite.
+
+### Referenz: gültige Werte für `project:`
+
+Der Wert in `project:` muss exakt (Groß-/Kleinschreibung egal) dem
+`acronym:` oder `title:` der Ziel-Notiz entsprechen. Stand aktuell:
+
+| Ziel | So in `project:` eintragen | Unterseite |
+|---|---|---|
+| GreenH2Metals | `GreenH2Metals` | `project-greenh2metals.html` |
+| TiFe from NZ Resources | `NZMat4H2Sto` *(oder `TiFe from NZ Resources`)* | `project-nzmat4h2sto.html` |
+| Portable metal hydride demonstrator | `HydridVault` | `project-hydridvault.html` |
+| German-NZ Green Hydrogen Centre | `He Honoka Hauwai` | `project-he-honoka-hauwai.html` |
+| Experimental and computational accelerated metal hydride aging for space applications | *(hat kein `acronym:`, also der volle Titel)* `Experimental and computational accelerated metal hydride aging for space applications` | `project-experimental-…-space-applications.html` |
+| Metal hydride design *(Kachel)* | `Metal hydride design` | `thread-metal-hydride-design.html` |
+| Multiscale workflows *(Kachel)* | `Multiscale workflows` | `thread-multiscale-workflows.html` |
+| Relativistic chemistry *(Kachel)* | `Relativistic chemistry` | `thread-relativistic-chemistry.html` |
+| AI-driven Materials Design *(Kachel)* | `AI-driven Materials Design` | `thread-ai-driven-materials-design.html` |
+| Chemical Bonding Analysis *(Kachel)* | `Chemical Bonding Analysis` | `thread-chemical-bonding-analysis.html` |
+
+Beispiel für ein Paper, das zu einem Projekt und einer Kachel gehört:
+
+```yaml
+project: GreenH2Metals, Chemical Bonding Analysis
+```
+
+Diese Tabelle ist eine Momentaufnahme — bei einem neuen Projekt/einer neuen
+Kachel steht der gültige Wert immer in deren eigener Notiz (`acronym:` bzw.
+`title:`), diese Übersicht einfach bei Gelegenheit ergänzen. `Kadi4Mat`
+(Projekt `Kadi4Mat-Workflows.md`) fehlt hier bewusst — `public: false`, hat
+also noch keine Unterseite.
+
+### Strukturgalerie (`gallery.html`)
+
+Eine Struktur pro Paper, als Galerie mit Suche, Filtern (Forschungsbereich,
+Element) und Sortierung (Standard: neueste zuerst). Ein Klick öffnet ein
+Pop-up mit der Referenz; dort dreht sich die Struktur langsam und lässt sich
+mit der Maus drehen. Ein Paper erscheint dort, sobald seine Notiz ein
+`structure:`-Feld hat:
+
+```yaml
+structure: TiFeH2_beta_Alvares2022.vasp       # Datei, siehe unten
+structure_label: TiFe hydride (β phase)       # optional: kurzer Name statt des Papertitels
+structure_caption: Ein Satz für das Pop-up.   # optional; H₂, Fe²⁺ usw. werden sauber tief/hochgestellt
+structure_view: 30, 20                        # optional: Drehung/Neigung in Grad
+structure_bonds: none                         # optional: keine Bindungen (oder Faktor, z. B. 1.25)
+structure_images: no                          # optional: bei Kristallen keine Bildatome auf Ecken/Flächen
+```
+
+- **Dateien** liegen am besten in `20-Arbeit/Paper/Strukturen` (dann reicht
+  der bloße Dateiname; weitere Ordner unter `structure_search_dirs:` in
+  `_build/config.yaml`). Ein Pfad relativ zur Vault-Wurzel oder zur Notiz geht
+  auch, ebenso ein Obsidian-Link `[[datei.xyz]]`.
+- **Formate:** `.xyz` und erweitertes `.xyz` (mit `Lattice="…"`),
+  VASP-POSCAR/CONTCAR (Dateiname `POSCAR*`/`CONTCAR*` oder Endung `.vasp`),
+  einfache `.cif`-Dateien (Symmetrieoperationen werden angewendet, wenn sie in
+  der Datei stehen). Alles wird von `build.py` in reinem Python gelesen — kein
+  Zusatzprogramm, keine Internetverbindung.
+- **Bindungen** werden aus kovalenten Radien bestimmt (Abstand kleiner als
+  1,15 × Summe der Radien). Findet sich keine Bindung (Metalle, Edelgase),
+  werden die Atome als raumfüllende Kugeln gezeichnet.
+- **Elementfarben:** Standard sind die Jmol-Farben; einzelne Elemente lassen
+  sich unter `element_colors:` in `_build/config.yaml` ändern.
+- **Anführungszeichen:** Beginnt ein Label mit einer eckigen Klammer (typisch
+  für Komplexe, z. B. `"[Fe(bpp)₂]²⁺"`), muss es in Anführungszeichen stehen —
+  sonst liest YAML es als Liste und der ganze Notizkopf wird unzuverlässig.
+- Kein Paper mit `structure:`? Dann zeigt die Seite nur einen kurzen Hinweis.
+- **Startseite:** Vor „Current projects“ zeigt die Startseite vier zufällig
+  gewählte Strukturen, bei jedem Aufruf neu gemischt. Ein Klick öffnet sie in
+  der Galerie. Anzahl über `front_structures:` in `_build/config.yaml`
+  (`0` schaltet den Block ab). Die Strukturdaten stehen in
+  `assets/gallery-data.js`, das `build.py` bei jedem Lauf neu schreibt.
 
 ---
 
@@ -533,41 +693,47 @@ Dateien selbst.
 
 ---
 
-## Kontaktseite & Impressum
+## Kontaktseite, Impressum & Datenschutz
 
-`contact.html` (Nav-Punkt „contact“) zeigt zwei Dinge:
+`contact.html` (Nav-Punkt „contact“) zeigt die Kontakt-Links (dieselbe Liste
+wie im Header der Startseite, aus `CV-Profil.md`) und die Postanschrift.
 
-**Kontakt-Links.** Dieselbe Liste wie im Header der Startseite (E-Mail,
-Google Scholar, ORCID, ResearchGate, GitHub, LinkedIn, Hereon-Profil) — einfach
-die entsprechenden Felder in `CV-Profil.md` ausfüllen, siehe oben.
-
-**Impressum.** Optional, standardmäßig **ausgeschaltet**. Steuerbar über den
-Block `impressum:` in `_build/config.yaml`:
+**Impressum und Datenschutzerklärung** stehen auf `impressum.html`, verlinkt in
+der Fußzeile jeder Seite. Die Impressumsangaben kommen aus dem Block
+`impressum:` in `_build/config.yaml`:
 
 ```yaml
 impressum:
-  enabled: false                  # auf true stellen, wenn die Angaben stimmen
-  responsible_name: ""            # leer = Name aus CV-Profil.md
+  enabled: true
+  responsible_name: "Dr. Paul Jerabek"
   address_lines:
-    - ""
-    - ""
+    - "Helmholtz-Zentrum Hereon"
+    - "Max-Planck-Straße 1"
+    - "21502 Geesthacht"
+    - "Deutschland"
   email: ""                       # leer = email aus CV-Profil.md
   phone: ""
-  extra: ""                       # freier Text, z. B. USt-ID, Aufsichtsbehörde
+  extra: "Freier Text unter dem Impressum"
 ```
 
-Lässt du `responsible_name`, `address_lines` und `email` leer, greift automatisch
-`CV-Profil.md` (Name, `address_line`, `email`) — dort steht deine Hereon-Adresse
-ja bereits drin. Heißt in der Praxis meistens: einfach `enabled: true` setzen und
-prüfen, ob dir die übernommenen Angaben genügen, oder eigene Zeilen eintragen,
-wenn du z. B. eine private statt der dienstlichen Adresse willst.
+Die **Datenschutzerklärung** ist die Datei `_build/templates/datenschutz.html`
+(normales HTML, frei bearbeitbar; `{{name}}`, `{{address}}` und `{{email}}`
+werden aus dem Impressum-Block eingesetzt). Sie beschreibt den aktuellen Stand
+der Seite: Hosting bei GitHub Pages (GitHub protokolliert IP-Adressen), keine
+Cookies, kein Tracking, lokal ausgelieferte Schriften, die Farbeinstellung im
+localStorage, Kontakt per E-Mail, externe Links, Betroffenenrechte. **Wenn du
+etwas einbaust, das Daten an Dritte schickt** (Analytics, eingebettete Videos,
+Schriften oder Skripte von fremden Servern, Kontaktformular), muss dieser Text
+angepasst werden.
 
-**Wichtig, keine Rechtsberatung:** Das ist eine Vorlage, kein geprüfter
-Rechtstext. Ob und in welcher Form eine Website ein Impressum braucht und was
-genau hineingehört (z. B. Verantwortlicher nach § 18 Abs. 2 MStV, ggf.
-USt-ID), hängt vom Einzelfall ab — bei einer Seite, die deine Hereon-Zugehörigkeit
-zeigt, lohnt sich kurz Rücksprache mit der Rechts-/Kommunikationsabteilung, bevor
-du `enabled: true` setzt.
+**Schriften:** Inter und IBM Plex Mono liegen in `_build/assets/fonts`
+(SIL Open Font License) und werden von der eigenen Seite geladen, nicht von
+Google — so gehen beim Seitenaufruf keine Besucherdaten an Google.
+
+**Keine Rechtsberatung:** Impressum und Datenschutzerklärung sind sorgfältig
+erstellte Vorlagen, aber kein geprüfter Rechtstext. Da die Dienstadresse
+genannt wird, lohnt sich eine kurze Rückfrage bei der Rechts- bzw.
+Kommunikationsabteilung von Hereon.
 
 ---
 
@@ -590,6 +756,18 @@ du `enabled: true` setzt.
 Die Google-Fonts-Einbindung in `base.html` ist die einzige externe Abhängigkeit der
 fertigen Seite. Wenn die Seite ganz ohne externe Anfragen auskommen soll: die beiden
 `<link>`-Zeilen entfernen — die CSS-Schriftstapel fallen dann auf Systemschriften zurück.
+
+---
+
+### Favicon
+
+Das Tab-Symbol (Hexagon mit „P“) liegt als `_build/assets/favicon.svg`,
+`favicon.ico` (16/32/48 px) und `apple-touch-icon.png` (180 px, für
+Handy-Startbildschirme). Die bearbeitbaren Vorlagen stehen in
+`_build/favicon/`: `favicon-hexagon-P.svg` (z. B. für CorelDraw) und
+`favicon-hexagon-P.pptx` (native PowerPoint-Formen; Folie 1 mit dem Buchstaben
+als Kontur, Folie 2 als Text). Nach einer Änderung die drei Dateien in
+`_build/assets/` ersetzen und neu bauen.
 
 ---
 
@@ -634,6 +812,19 @@ im Hintergrundtab, respektiert `prefers-reduced-motion` (dann läuft gar nichts)
 `pointer-events:none` und liegt hinter dem gesamten Inhalt. Im Druck-Stylesheet
 (`cv.html` → PDF) ist sie ohnehin ausgeblendet.
 
+**Farbe und Deutlichkeit** stehen oben in `_build/assets/style.css` im
+`:root`-Block: `--bg-anim` (Linienfarbe, aktuell Petrol `#10635c`, im
+Dunkelmodus `#5cbfb2`) und `--bg-anim-strength` (Verstärkungsfaktor für die
+Deckkraft; 1 = sehr blass, aktuell 1,5 bzw. 1,4 im Dunkelmodus).
+
+**Still oder bewegt:** Standardmäßig (`background_motion: false` in
+`_build/config.yaml`) wird das Motiv nur **einmal** gezeichnet und steht dann —
+ein einziges Bild im Speicher, danach läuft kein Code mehr (neu gezeichnet wird
+nur bei Fenstergröße- oder Theme-Wechsel). Das ist die mit Abstand
+speicherschonendste Variante. Mit `background_motion: true` bewegt es sich
+langsam (~20 Bilder/s); das kostet im Browser spürbar mehr Arbeitsspeicher,
+besonders in Firefox.
+
 ---
 
 ## Regelmäßig prüfen
@@ -657,6 +848,8 @@ Einmal im Jahr lohnt ein Blick auf:
 | Datum wird nicht angezeigt | Datumsfelder brauchen das Format `JJJJ-MM-TT` |
 | Kaputte YAML-Header | Der Generator fängt Parser-Fehler ab und liest den Header zeilenweise — das Ergebnis kann dann aber unvollständig sein. `--verbose` zeigt, was geladen wurde |
 | Projektbild erscheint nicht | Pfad in `image:` (oder `banner:`) prüfen — er ist relativ zur Vault-Wurzel, nicht zur Notiz. `--verbose` zeigt unter „project images“, wie viele gefunden wurden |
+| Publikation fehlt unter „Related publications“ (Projekt- oder Forschungs-Kachel-Unterseite) | Paper und Ziel teilen kein `topics:`-Tag — entweder Tag ergänzen, `project:` im Paper mit dem Projekt-/Kachel-Namen setzen, oder `related_papers:` in der Ziel-Notiz mit einem Textstück aus dem Titel |
+| Kachel verlinkt weiter nach außen statt auf ihre eigene Unterseite | `link:` ist in der `research-thread`-Notiz gesetzt — Feld entfernen, damit die automatische Unterseite `thread-<slug>.html` greift |
 | `cv.pdf` fehlt, Link auf der CV-Seite auch | `pdflatex` ist nicht installiert, siehe „CV erzeugen“. Die Konsolenausgabe von `./update.sh` sagt es explizit |
 | `pdflatex` meldet einen Fehler | Die ersten Fehlerzeilen stehen in der Konsole, das volle Protokoll in `_build/generated/cv.log`. Meist ein Sonderzeichen, das der Generator noch nicht kennt — kurze Nachricht genügt, das lässt sich in `TEX_UNICODE` in `_build/build.py` ergänzen |
 | `! LaTeX Error: File 'eurosym.sty' not found` (ältere Fehlerprotokolle) | Behoben: `build_latex_cv()` nutzt seit September 2026 `\texteuro` aus dem Standardpaket `textcomp` statt `eurosym`, keine zusätzliche `apt install` nötig. Falls der Fehler doch wieder auftaucht: `_build/build.py` ist nicht aktuell, neu vom Repository holen |

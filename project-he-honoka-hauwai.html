@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>He Honoka Hauwai</title>
+<meta name="description" content="Multiscale simulation of metal hydrides for hydrogen storage.">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="Paul Jerabek" href="feed.xml">
+<meta name="color-scheme" content="light dark">
+<!-- Apply the stored theme before the first paint, so pages never flash.
+     Order: link hash (the only channel that survives file:// browsing,
+     where each page gets its own storage area) -> localStorage -> system. -->
+<script>(function(){var d=document.documentElement,t=null;
+try{var m=/(?:^|[#?&])theme=(dark|light)/.exec(location.hash+location.search);if(m){t=m[1];}}catch(e){}
+if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
+if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
+
+</head>
+<body class="page-project" data-bg="bands" data-bg-motion="1">
+
+<canvas id="bg-anim" aria-hidden="true"></canvas>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="index.html">Paul Jerabek<span> &middot; Dr. rer. nat.</span></a>
+  <nav class="main">
+      <a href="index.html">about</a>
+      <a href="publications.html">publications</a>
+      <a class="cur" href="projects.html">projects</a>
+      <a href="talks.html">talks</a>
+      <a href="teaching.html">teaching</a>
+      <a href="gallery.html">gallery</a>
+      <a href="cv.html">cv</a>
+      <a href="contact.html">contact</a>
+      <button class="themebtn" id="themebtn" type="button" title="Switch colour theme" aria-label="Switch colour theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+      </button>
+  </nav>
+</div></header>
+
+<main id="main">
+<section class="hero"><div class="wrap"><a class="more" href="projects.html">&larr; All projects</a><img class="pjimg" src="assets/img/projects/he-honoka-hauwai.png" alt="" loading="lazy"><h1 class="name">He Honoka Hauwai</h1><p class="psub">German-NZ Green Hydrogen Centre</p><p class="role">Oct 2021 &ndash; Sep 2026<br>Co-Leader &middot; BMBF (Germany) / MBIE (New Zealand) &middot; 760 k€</p><div class="chips"><span class="chip">New Zealand</span><span class="chip">Bilateral collaboration</span><span class="chip">Hydrogen production</span><span class="chip">Hydrogen storage</span><span class="chip">Hydrogen utilization</span></div></div></section>
+<section><div class="wrap">
+<h2 class="sec">About this project</h2>
+<p>Bilateral German-New Zealand research centre for green hydrogen, jointly run by Hereon and the University of Otago.</p>
+</div></section>
+<section><div class="wrap">
+<h2 class="sec">Related publications</h2>
+<div class="pub" data-year="2026" data-topics="tife, oxides, hydrogen storage, dft" data-cat="theory" data-search="role of elemental substitution on hydrogen incorporation in characteristic ti/fe-based oxides a. j. e. rowberg, s. kang, k. sellschopp, p. jerabek, t. w. heo, b. c. wood acs appl. energy mater. tife, oxides, hydrogen storage, dft"><div class="yr">2026</div><div><p class="t">Role of Elemental Substitution on Hydrogen Incorporation in Characteristic Ti/Fe-Based Oxides</p><p class="a">A. J. E. Rowberg, S. Kang, K. Sellschopp, <strong>P. Jerabek</strong>, T. W. Heo, B. C. Wood</p><p class="j"><i>ACS Appl. Energy Mater.</i>, <b>9</b>, 1242–1253 (2026) &middot; <a href="https://doi.org/10.1021/acsaem.5c03738" rel="noopener">doi:10.1021/acsaem.5c03738</a> &middot; <button class="bibtn" type="button" data-key="Rowberg2026c">BibTeX</button></p><pre class="bib" id="bib-Rowberg2026c" hidden>@article{Rowberg2026c,
+  author   = {A. J. E. Rowberg and S. Kang and K. Sellschopp and P. Jerabek and T. W. Heo and B. C. Wood},
+  title    = {{Role of Elemental Substitution on Hydrogen Incorporation in Characteristic Ti/Fe-Based Oxides}},
+  journal  = {ACS Appl. Energy Mater.},
+  year     = {2026},
+  volume   = {9},
+  pages    = {1242–1253},
+  doi      = {10.1021/acsaem.5c03738},
+}</pre></div></div><div class="pub" data-year="2025" data-topics="tife, metal hydrides, hydrogen storage, thermodynamics, dft" data-cat="theory" data-search="predicting hydrogen storage capacity loss of feti by ab initio thermodynamic modelling of fe–ti–si phase equilibria l. dinachandran, e. alvares, k. sellschopp, t. klassen, p. jerabek, a. l. garden acta mater. tife, metal hydrides, hydrogen storage, thermodynamics, dft"><div class="yr">2025</div><div><p class="t">Predicting hydrogen storage capacity loss of FeTi by ab initio thermodynamic modelling of Fe–Ti–Si phase equilibria</p><p class="a">L. Dinachandran, E. Alvares, K. Sellschopp, T. Klassen, <strong>P. Jerabek</strong>, A. L. Garden</p><p class="j"><i>Acta Mater.</i>, <b>301</b>, 121514 (2025) &middot; <a href="https://doi.org/10.1016/j.actamat.2025.121514" rel="noopener">doi:10.1016/j.actamat.2025.121514</a> &middot; <button class="bibtn" type="button" data-key="Dinachandran2025c">BibTeX</button></p><pre class="bib" id="bib-Dinachandran2025c" hidden>@article{Dinachandran2025c,
+  author   = {L. Dinachandran and E. Alvares and K. Sellschopp and T. Klassen and P. Jerabek and A. L. Garden},
+  title    = {{Predicting hydrogen storage capacity loss of FeTi by ab initio thermodynamic modelling of Fe–Ti–Si phase equilibria}},
+  journal  = {Acta Mater.},
+  year     = {2025},
+  volume   = {301},
+  pages    = {121514},
+  doi      = {10.1016/j.actamat.2025.121514},
+}</pre></div></div><div class="pub" data-year="2025" data-topics="complex hydrides, ionic conductivity" data-cat="experiment, theory" data-search="high ionic conduction in rb- and cs-mixed cation amide for energy storage t. t. le, k. sellschopp, f. murgia, a. l. garden, s. bordignon, j. p. embs, m. r. chierotti, a. schökel, f. karimi, p. jerabek, t. klassen, c. pistidda small complex hydrides, ionic conductivity"><div class="yr">2025</div><div><p class="t">High Ionic Conduction in Rb- and Cs-Mixed Cation Amide for Energy Storage<span class="badge">open access</span></p><p class="a">T. T. Le, K. Sellschopp, F. Murgia, A. L. Garden, S. Bordignon, J. P. Embs, M. R. Chierotti, A. Schökel, F. Karimi, <strong>P. Jerabek</strong>, T. Klassen, C. Pistidda</p><p class="j"><i>Small</i>, 2502943 (2025) &middot; <a href="https://doi.org/10.1002/smll.202502943" rel="noopener">doi:10.1002/smll.202502943</a> &middot; <button class="bibtn" type="button" data-key="Le2025b">BibTeX</button></p><pre class="bib" id="bib-Le2025b" hidden>@article{Le2025b,
+  author   = {T. T. Le and K. Sellschopp and F. Murgia and A. L. Garden and S. Bordignon and J. P. Embs and M. R. Chierotti and A. Schökel and F. Karimi and P. Jerabek and T. Klassen and C. Pistidda},
+  title    = {{High Ionic Conduction in Rb- and Cs-Mixed Cation Amide for Energy Storage}},
+  journal  = {Small},
+  year     = {2025},
+  pages    = {2502943},
+  doi      = {10.1002/smll.202502943},
+}</pre></div></div>
+</div></section>
+</main>
+
+<footer class="site"><div class="wrap">
+  <span>&copy; 2026 Paul Jerabek &middot; Geesthacht, Germany</span>
+  <span class="flinks"><a href="impressum.html">Impressum</a> &middot; <a href="impressum.html#datenschutz">Datenschutz</a> &middot; Last updated 28 September 2026</span>
+</div></footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/bg.js" defer></script>
+
+</body>
+</html>

@@ -11,7 +11,8 @@
 #   ./update.sh --vault /some/other/path
 #   WEBSITE_VAULT_PATH=/some/other/path ./update.sh
 vault:
-  - "/home/paul/Obsidian/Main-Vault"
+  #  - "/home/paul/Obsidian/Main-Vault"
+  - "/mnt/c/Users/jerabek/Obsidian/Main-Vault"
 
 # Where the finished website is written (relative to the website/ folder).
 output: "."
@@ -19,6 +20,7 @@ output: "."
 site:
   url: "https://p9k.github.io"          # used for sitemap.xml and feed.xml
   title: "Paul Jerabek"
+  home_title: "Paul Jerabek - Personal Website"   # browser-tab title of the homepage only
   description: "Multiscale simulation of metal hydrides for hydrogen storage."
   lang: "en"
   footer_location: "Geesthacht, Germany"
@@ -41,6 +43,7 @@ nav:
   - ["projects",     "projects.html"]
   - ["talks",        "talks.html"]
   - ["teaching",     "teaching.html"]
+  - ["gallery",      "gallery.html"]
   - ["cv",           "cv.html"]
   - ["contact",      "contact.html"]
 
@@ -63,6 +66,8 @@ options:
   front_publications: 4
   front_news: 4
   front_projects: 3
+  # Random structures from the gallery on the homepage (new pick on every visit; 0 = off).
+  front_structures: 4
   # Only papers with one of these status values are published on the website.
   published_status: ["Published"]
   # Generate these extras.
@@ -84,6 +89,11 @@ options:
   # (or the concept-preview file you already have). Change this line and
   # rebuild to switch; no other file needs touching.
   background_animation: "bands"
+  # false (default): the motif is drawn ONCE and stays still -- one small
+  # bitmap, no code running afterwards, lightest on memory and battery.
+  # true: the motif moves slowly (~20 frames per second) -- noticeably more
+  # memory in the browser, especially in Firefox.
+  background_motion: true
 
 # Where a project's picture is looked up when its `image:` (or `banner:`)
 # field is a bare filename with no folder, e.g. "scrap-metal.jpg".
@@ -91,17 +101,30 @@ image_search_dirs:
   - "90-Meta/Anhänge/banner"
   - "90-Meta/Anhänge"
 
-# Legal notice ("Impressum"), shown on the Contact page. This is a template,
+# Legal notice ("Impressum"), shown on impressum.html (linked in every page footer)
+# together with the privacy policy from templates/datenschutz.html. This is a template,
 # NOT legal advice -- fill in your real information. If the site represents
 # your institutional affiliation, check the exact wording your institution's
 # legal/communications office requires (in Germany: responsible party under
 # § 18 Abs. 2 MStV, address, contact, and any required disclosures).
 impressum:
-  enabled: false                  # flip to true once the fields below are filled in
-  responsible_name: ""            # e.g. "Dr. Paul Jerabek"
+  enabled: true
+  responsible_name: "Dr. Paul Jerabek"
   address_lines:
-    - ""                          # e.g. "Max-Planck-Straße 1"
-    - ""                          # e.g. "21502 Geesthacht, Germany"
-  email: ""                       # leave empty to reuse profile.email
+    - "Helmholtz-Zentrum Hereon"
+    - "Max-Planck-Straße 1"
+    - "21502 Geesthacht"
+    - "Deutschland"
+  email: ""                       # empty: reuse profile.email (CV-Profil note)
   phone: ""                       # optional
-  extra: ""                       # optional free text (Aufsichtsbehörde, USt-ID, disclaimers, ...)
+  extra: "Dies ist meine persönliche Website. Sie ist kein offizielles Angebot des Helmholtz-Zentrums Hereon."
+
+# Structure gallery (gallery.html). A paper appears there when its note has
+# `structure:` pointing to an .xyz / extended .xyz, VASP POSCAR/CONTCAR or
+# .cif file. A bare filename is looked up in these vault folders:
+structure_search_dirs:
+  - "20-Arbeit/Paper/Strukturen"
+# Element colours: standard Jmol colours by default; list only the ones you
+# want to change, e.g.  Fe: "#d7643a"
+element_colors:
+  Og: "#c9759b"

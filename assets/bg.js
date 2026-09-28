@@ -23,31 +23,62 @@
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
 
+  /* The accent colour is read once and cached -- calling getComputedStyle on
+     every frame is surprisingly expensive. It's re-read only when the theme
+     actually changes (theme button, or the OS switching light/dark). */
+  /* Colour and strength come from two CSS custom properties in style.css:
+     --bg-anim (line colour, falls back to the accent --acc) and
+     --bg-anim-strength (multiplies every opacity below; 1 = original,
+     very faint look). Both can differ between light and dark mode. */
+  var accentCache = null, STRENGTH = 1;
+  function readAccent() {
+    var cs = getComputedStyle(document.documentElement);
+    var v = (cs.getPropertyValue("--bg-anim") || "").trim() ||
+            (cs.getPropertyValue("--acc") || "").trim();
+    accentCache = v || "#10635c";
+    var st = parseFloat(cs.getPropertyValue("--bg-anim-strength"));
+    STRENGTH = isFinite(st) && st > 0 ? st : 1;
+  }
   function accent() {
-    var v = getComputedStyle(document.documentElement).getPropertyValue("--acc");
-    return (v || "#10635c").trim();
+    if (accentCache === null) readAccent();
+    return accentCache;
+  }
+  var onChange = null;               // set in "Boot": redraw hook for still mode
+  function themeChanged() { readAccent(); if (onChange) onChange(); }
+  if (window.MutationObserver) {
+    new MutationObserver(themeChanged).observe(document.documentElement,
+      { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", themeChanged);
   }
   function rgba(hex, a) {
     hex = hex.replace("#", "");
     if (hex.length === 3) hex = hex.split("").map(function (c) { return c + c; }).join("");
     var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
-    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+    return "rgba(" + r + "," + g + "," + b + "," + Math.min(1, a * STRENGTH) + ")";
   }
-  var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  /* Rendered at 1x resolution: the lines are faint, low-contrast background
+     texture, so HiDPI sharpness is invisible here but would cost 2-4x the
+     canvas memory. Resizes are debounced (a window drag fires dozens of
+     resize events, each of which would reallocate the canvas). */
+  var W = 0, H = 0;
   function resize() {
-    W = canvas.width = Math.round(window.innerWidth * DPR);
-    H = canvas.height = Math.round(window.innerHeight * DPR);
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
   }
-  window.addEventListener("resize", resize);
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { resize(); if (onChange) onChange(); }, 150);
+  });
   resize();
   function s(w) { return Math.min(w / 1400, 2); }   // scale factor for a full-page canvas
 
-  var running = true;
-  document.addEventListener("visibilitychange", function () {
-    running = document.visibilityState === "visible";
-  });
+  var running = document.visibilityState !== "hidden";
 
   /* ---------------------------------------------------------------------
    *  Patterns - each returns a draw(t) function bound to the live canvas.
@@ -125,7 +156,7 @@
   };
 
   patterns.diffusion = function () {
-    var parts = null;
+    var parts = null, lastT = null;
     function ensure() {
       if (parts) return;
       var n = Math.round((W * H) / 16000);
@@ -139,8 +170,10 @@
       ctx.lineWidth = 1;
       for (var x = 0; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
       for (var y = 0; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      var dt = lastT === null ? 16 : Math.max(0, t - lastT);
+      lastT = t;
       if (running) parts.forEach(function (p) {
-        p.x += p.vx * 16; p.y += p.vy * 16;
+        p.x += p.vx * dt; p.y += p.vy * dt;
         if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
         if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
       });
@@ -453,17 +486,48 @@
   /* ---------------------------------------------------------------------
    *  Boot
    * ------------------------------------------------------------------- */
+  /* All patterns move very slowly, so ~20 frames per second looks identical
+     to 60 but costs a third of the work. `t` advances with real elapsed
+     time (ms), so the motion speed doesn't depend on the frame rate. When
+     the tab is hidden the loop stops completely (no queued frames at all)
+     and resumes where it left off. */
   var make = patterns[key];
   if (!make) return;
   var draw = make();
-  var t = 0;
-  function frame() {
-    if (running) {
+
+  /* Still mode (the default, options.background_motion: false): draw one
+     frame and stop. No animation loop, no timers -- the page then holds
+     just one viewport-sized bitmap. Redrawn only when the window is resized
+     or the colour theme changes. */
+  if (body.getAttribute("data-bg-motion") !== "1") {
+    var STILL_T = 4000;        // a moment where the motif looks balanced
+    onChange = function () { ctx.clearRect(0, 0, W, H); draw(STILL_T); };
+    onChange();
+    return;
+  }
+
+  var FRAME_MS = 50;           // ~20 fps
+  var t = 0, last = 0, raf = 0;
+  function frame(now) {
+    raf = 0;
+    if (!running) return;
+    if (!last) last = now;
+    var dt = now - last;
+    if (dt >= FRAME_MS) {
+      t += Math.min(dt, 200);  // don't jump after a long stall
+      last = now;
       ctx.clearRect(0, 0, W, H);
       draw(t);
-      t += 16;
     }
-    requestAnimationFrame(frame);
+    raf = requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  function start() {
+    if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
+  }
+  document.addEventListener("visibilitychange", function () {
+    running = document.visibilityState === "visible";
+    if (running) start();
+    else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  });
+  if (running) start();
 })();

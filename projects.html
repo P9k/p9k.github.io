@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Projects</title>
 <meta name="description" content="Multiscale simulation of metal hydrides for hydrogen storage.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="alternate" type="application/rss+xml" title="Paul Jerabek" href="feed.xml">
 <meta name="color-scheme" content="light dark">
@@ -20,7 +20,7 @@ if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
 if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
 
 </head>
-<body class="" data-bg="bands">
+<body class="" data-bg="bands" data-bg-motion="1">
 
 <canvas id="bg-anim" aria-hidden="true"></canvas>
 
@@ -34,6 +34,7 @@ if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
       <a class="cur" href="projects.html">projects</a>
       <a href="talks.html">talks</a>
       <a href="teaching.html">teaching</a>
+      <a href="gallery.html">gallery</a>
       <a href="cv.html">cv</a>
       <a href="contact.html">contact</a>
       <button class="themebtn" id="themebtn" type="button" title="Switch colour theme" aria-label="Switch colour theme">
@@ -46,11 +47,11 @@ if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
 <main id="main">
 <section><div class="wrap">
 <h2 class="sec">Current projects</h2>
-<div class="pgrid"><article class="pcard"><img class="pimg" src="assets/img/projects/hydridvault.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>HydridVault</h3><span class="when">Jan 2026 &ndash; Feb 2027</span></header><p class="psub">Portable metal hydride demonstrator</p><p class="pd">A portable metal hydride demonstrator tank for safe, low-pressure hydrogen storage.</p><p class="pm">Principal Investigator &middot; BMBF (Germany) / MBIE (New Zealand)</p></div></article><article class="pcard"><img class="pimg" src="assets/img/projects/greenh2metals.jpg" alt="" loading="lazy"><div class="pcard-body"><header><h3>GreenH2Metals</h3><span class="when">Apr 2024 &ndash; Mar 2027</span></header><p class="pd">Sustainable, circular metal alloys for the efficient and safe storage of hydrogen in stationary applications.</p><p class="pm">Principal Investigator &middot; BMBF (Germany) &middot; 1.5 M€</p><div class="chips"><span class="chip">Sustainability</span><span class="chip">TiFe</span><span class="chip">Techno-economics</span><span class="chip">In-situ characterization</span></div></div></article><article class="pcard"><img class="pimg" src="assets/img/projects/he-honoka-hauwai.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>He Honoka Hauwai</h3><span class="when">Oct 2021 &ndash; Sep 2026</span></header><p class="psub">German-NZ Green Hydrogen Centre</p><p class="pd">Bilateral German-New Zealand research centre for green hydrogen, jointly run by Hereon and the University of Otago.</p><p class="pm">Co-Leader &middot; BMBF (Germany) / MBIE (New Zealand) &middot; 760 k€</p><div class="chips"><span class="chip">New Zealand</span><span class="chip">Bilateral collaboration</span><span class="chip">Hydrogen production</span><span class="chip">Hydrogen storage</span></div></div></article><article class="pcard"><img class="pimg" src="assets/img/projects/nzmat4h2sto.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>NZMat4H2Sto</h3><span class="when">Sep 2022 &ndash; Oct 2025</span></header><p class="psub">TiFe from NZ Resources</p><p class="pd">Generating hydrogen storage materials from New Zealand ilmenite and iron sand resources.</p><p class="pm">Coordinator &middot; BMBF (Germany) &middot; 400 k€ &middot; grant 03SF0691</p><div class="chips"><span class="chip">TiFe</span><span class="chip">Alternative feedstock</span><span class="chip">Ilmenite</span><span class="chip">Direct reduction</span></div></div></article></div>
+<div class="pgrid"><a class="pcard" href="project-hydridvault.html"><img class="pimg" src="assets/img/projects/hydridvault.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>HydridVault</h3><span class="when">Jan 2026 &ndash; Feb 2027</span></header><p class="psub">Portable metal hydride demonstrator</p><p class="pd">A portable metal hydride demonstrator tank for safe, low-pressure hydrogen storage.</p><p class="pm">Principal Investigator &middot; BMBF (Germany) / MBIE (New Zealand)</p></div></a><a class="pcard" href="project-greenh2metals.html"><img class="pimg" src="assets/img/projects/greenh2metals.jpg" alt="" loading="lazy"><div class="pcard-body"><header><h3>GreenH2Metals</h3><span class="when">Apr 2024 &ndash; Mar 2027</span></header><p class="pd">Sustainable, circular metal alloys for the efficient and safe storage of hydrogen in stationary applications.</p><p class="pm">Principal Investigator &middot; BMBF (Germany) &middot; 1.5 M€</p><div class="chips"><span class="chip">Sustainability</span><span class="chip">TiFe</span><span class="chip">Techno-economics</span><span class="chip">In-situ characterization</span></div></div></a><a class="pcard" href="project-he-honoka-hauwai.html"><img class="pimg" src="assets/img/projects/he-honoka-hauwai.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>He Honoka Hauwai</h3><span class="when">Oct 2021 &ndash; Sep 2026</span></header><p class="psub">German-NZ Green Hydrogen Centre</p><p class="pd">Bilateral German-New Zealand research centre for green hydrogen, jointly run by Hereon and the University of Otago.</p><p class="pm">Co-Leader &middot; BMBF (Germany) / MBIE (New Zealand) &middot; 760 k€</p><div class="chips"><span class="chip">New Zealand</span><span class="chip">Bilateral collaboration</span><span class="chip">Hydrogen production</span><span class="chip">Hydrogen storage</span></div></div></a><a class="pcard" href="project-nzmat4h2sto.html"><img class="pimg" src="assets/img/projects/nzmat4h2sto.png" alt="" loading="lazy"><div class="pcard-body"><header><h3>NZMat4H2Sto</h3><span class="when">Sep 2022 &ndash; Oct 2025</span></header><p class="psub">TiFe from NZ Resources</p><p class="pd">Generating hydrogen storage materials from New Zealand ilmenite and iron sand resources.</p><p class="pm">Coordinator &middot; BMBF (Germany) &middot; 400 k€ &middot; grant 03SF0691</p><div class="chips"><span class="chip">TiFe</span><span class="chip">Alternative feedstock</span><span class="chip">Ilmenite</span><span class="chip">Direct reduction</span></div></div></a></div>
 </div></section>
 <section><div class="wrap">
 <h2 class="sec">Completed projects</h2>
-<div class="pgrid"><article class="pcard"><img class="pimg" src="assets/img/projects/experimental-and-computational-accelerated-metal-hydride-aging-for-space-applications.jpg" alt="" loading="lazy"><div class="pcard-body"><header><h3>Experimental and computational accelerated metal hydride aging for space applications</h3><span class="when">Apr 2023 &ndash; Oct 2023</span></header><p class="pd">Atomistic study of metal hydride degradation under the conditions of long-term space operation.</p><p class="pm">PI &middot; ESA</p><div class="chips"><span class="chip">Experiment</span><span class="chip">Theory</span><span class="chip">ESA</span><span class="chip">Metal hydrides</span></div></div></article></div>
+<div class="pgrid"><a class="pcard" href="project-experimental-and-computational-accelerated-metal-hydride-aging-for-space-applications.html"><img class="pimg" src="assets/img/projects/experimental-and-computational-accelerated-metal-hydride-aging-for-space-applications.jpg" alt="" loading="lazy"><div class="pcard-body"><header><h3>Experimental and computational accelerated metal hydride aging for space applications</h3><span class="when">Apr 2023 &ndash; Oct 2023</span></header><p class="pd">Atomistic study of metal hydride degradation under the conditions of long-term space operation.</p><p class="pm">PI &middot; ESA</p><div class="chips"><span class="chip">Experiment</span><span class="chip">Theory</span><span class="chip">ESA</span><span class="chip">Metal hydrides</span></div></div></a></div>
 </div></section>
 <section><div class="wrap">
 <h2 class="sec">Funding</h2>
@@ -61,7 +62,7 @@ if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
 
 <footer class="site"><div class="wrap">
   <span>&copy; 2026 Paul Jerabek &middot; Geesthacht, Germany</span>
-  <span>Last updated 22 September 2026</span>
+  <span class="flinks"><a href="impressum.html">Impressum</a> &middot; <a href="impressum.html#datenschutz">Datenschutz</a> &middot; Last updated 28 September 2026</span>
 </div></footer>
 
 <script src="assets/site.js"></script>

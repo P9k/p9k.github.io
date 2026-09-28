@@ -16,6 +16,7 @@ import datetime as dt
 import html
 import io
 import json
+import math
 import os
 import re
 import shutil
@@ -199,10 +200,34 @@ def md_inline(text):
     return t
 
 
+def strip_code_fences(lines):
+    """Drop every ``` ... ``` fenced block (Obsidian plugin syntax such as
+    ```dataview``` queries above all -- meaningless outside Obsidian and
+    never meant to be public) before the line-by-line pass below."""
+    out, in_fence = [], False
+    for line in lines:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence:
+            out.append(line)
+    return out
+
+
 def md_block(text):
-    """Paragraphs, bullet lists and inline markup.  Callouts are dropped."""
+    """Paragraphs, bullet lists and inline markup.  Callouts, fenced code
+    blocks, Dataview inline fields (`key:: value`), Obsidian task-list
+    checkboxes (`- [ ] ...` -- internal to-dos, never public) and embed
+    references (`![[...]]`, e.g. an image or a Bases/Dataview view) are
+    dropped -- all Obsidian-only editor syntax with nothing meaningful to
+    show on the public site."""
     lines = [l for l in S(text).split("\n")]
     lines = [l for l in lines if not l.lstrip().startswith(">")]
+    lines = strip_code_fences(lines)
+    lines = [l for l in lines if not re.match(r"^\s*[\w][\w \-]*::\s", l)]
+    lines = [l for l in lines if not re.match(r"^\s*(---+|\*\*\*+|___+)\s*$", l)]
+    lines = [l for l in lines if not re.match(r"^\s*[-*]\s+\[[ xX]\]\s", l)]
+    lines = [re.sub(r"!\[\[[^\]]*\]\]", "", l) for l in lines]
     out, para, bullets = [], [], []
 
     def flush():
@@ -253,9 +278,57 @@ def topics_of(note, cfg):
     return [t for t in L(note.get("topics")) if t.lower() not in block]
 
 
+def entity_identifiers(entity):
+    """Names a paper's `project:` field might use to point at this project
+    or research thread: its acronym (projects), its title, and its slug --
+    whichever of those the note actually has."""
+    ids = {S(entity.get("acronym")), S(entity.get("title")), S(entity.get("_slug"))}
+    return {i.lower() for i in ids if i}
+
+
+def related_publications(entity, d, cfg, use_topics=True):
+    """Publications relevant to a project or research thread. Three ways in,
+    from least to most precise:
+      1. automatic, by shared `topics:` (the tags already maintained on
+         papers, projects and research threads alike);
+      2. a paper explicitly listing this project/thread in its own
+         `project:` field (its acronym, title or slug -- whichever matches)
+         -- the precise, per-paper control knob;
+      3. a manual pin the other way, via the project's/thread's own
+         `related_papers:` field: a substring of a paper's title, for a
+         paper that doesn't share a topic and isn't worth editing just for
+         this.
+    Keeps d.publications' existing year-descending order.
+    """
+    etopics = {t.lower() for t in topics_of(entity, cfg)}
+    manual = [S(x).lower() for x in L(entity.get("related_papers")) if S(x)]
+    ids = entity_identifiers(entity)
+    out = []
+    for n in d.publications:
+        shares_topic = use_topics and bool(etopics & {t.lower() for t in topics_of(n, cfg)})
+        is_pinned = any(m in S(n.get("publication")).lower() for m in manual)
+        is_tagged = bool(ids & {p.lower() for p in L(n.get("project"))})
+        if shares_topic or is_pinned or is_tagged:
+            out.append(n)
+    return out
+
+
 def slugify(s):
     s = re.sub(r"[^a-z0-9]+", "-", S(s).lower()).strip("-")
     return s or "item"
+
+
+def project_slug(p):
+    """The slug used for both a project's image filename and its detail
+    page (project-<slug>.html), so the two stay predictably in sync."""
+    return slugify(S(p.get("acronym")) or p["_slug"])
+
+
+def thread_slug(t):
+    """The slug used for a research thread's detail page
+    (thread-<slug>.html). Threads have no `acronym:`, so fall back straight
+    to the title / note filename."""
+    return slugify(S(t.get("title")) or t["_slug"])
 
 
 def resolve_vault_image(vault, note, attachment_dirs):
@@ -303,7 +376,7 @@ def copy_project_images(cfg, d, out_dir):
             p["_image_url"] = info["src"]
             continue
         ext = os.path.splitext(info["src"])[1].lower() or ".jpg"
-        dest_name = slugify(S(p.get("acronym")) or p["_slug"]) + ext
+        dest_name = project_slug(p) + ext
         os.makedirs(img_dir, exist_ok=True)
         shutil.copy2(info["src"], os.path.join(img_dir, dest_name))
         p["_image_url"] = "assets/img/projects/" + dest_name
@@ -539,6 +612,7 @@ def page(cfg, current, title, content, extra_head="", extra_js="", body_class=""
             .replace("{{description}}", E(cfg["site"]["description"]))
             .replace("{{body_class}}", E(body_class))
             .replace("{{bg}}", E(S(cfg["options"].get("background_animation")) or "none"))
+            .replace("{{bgmotion}}", "1" if cfg["options"].get("background_motion") is True else "0")
             .replace("{{brand}}", brand)
             .replace("{{brand_href}}", "index.html")
             .replace("{{nav}}", "\n      ".join(nav))
@@ -574,11 +648,18 @@ def obf_mail(addr):
     return "".join("&#%d;" % ord(c) for c in addr)
 
 
-def social_links(prof, include_cv=False):
-    """(href, text) pairs for every populated contact / profile link.
+def ext_link(href, text, external=True):
+    """One <a> tag. External links (anything leaving the site: profile
+    pages, DOIs, project links, ...) open in a new tab; internal
+    navigation (cv.html, mailto:) stays in the same tab as usual."""
+    attrs = ' target="_blank" rel="noopener noreferrer"' if external else ' rel="noopener"'
+    return '<a href="%s"%s>%s</a>' % (href, attrs, text)
 
-    Shared by the about page, the CV header and the contact page so the set
-    of links only has to be maintained in one place."""
+
+def social_links(prof, include_cv=False):
+    """(href, text, external) triples for every populated contact / profile
+    link. Shared by the about page, the CV header and the contact page so
+    the set of links only has to be maintained in one place."""
     raw = [("email", S(prof.get("email"))),
            ("Google Scholar", S(prof.get("scholar"))),
            ("ORCID", S(prof.get("orcid"))),
@@ -591,11 +672,11 @@ def social_links(prof, include_cv=False):
         if not value:
             continue
         if label == "email":
-            out.append(("mailto:" + obf_mail(value), "Email"))
+            out.append(("mailto:" + obf_mail(value), "Email", False))
         else:
-            out.append((E(value), E(label)))
+            out.append((E(value), E(label), True))
     if include_cv:
-        out.append(("cv.html", "Curriculum Vitae"))
+        out.append(("cv.html", "Curriculum Vitae", False))
     return out
 
 
@@ -604,8 +685,7 @@ def build_index(cfg, d):
     opt = cfg["options"]
     out = []
 
-    social = ['<a href="%s" rel="noopener">%s</a>' % (href, text)
-              for href, text in social_links(prof, include_cv=True)]
+    social = [ext_link(href, text, ext) for href, text, ext in social_links(prof, include_cv=True)]
 
     role_bits = [S(prof.get("position")), S(prof.get("position_second"))]
     role = " &middot; ".join(E(b) for b in role_bits if b)
@@ -625,16 +705,13 @@ def build_index(cfg, d):
     if d.threads:
         cards = []
         for t in d.threads:
-            link = S(t.get("link"))
+            link = S(t.get("link")) or ("thread-%s.html" % thread_slug(t))
             inner = ('<div class="ic">%s</div><h3>%s</h3><p>%s</p>' %
                      (E(S(t.get("icon"))), E(S(t.get("title"))),
                       md_inline(re.sub(r"\s+", " ", S(t.get("_body")).strip()))))
-            if link:
-                cards.append('<a class="thread" href="%s">%s</a>' % (E(link), inner))
-            else:
-                cards.append('<div class="thread">%s</div>' % inner)
+            cards.append('<a class="thread" href="%s">%s</a>' % (E(link), inner))
         out.append(section("Research", prose.get("research_intro", ""),
-                           '<div class="threads">%s</div>' % "".join(cards)))
+                           '<div class="threads">%s</div>' % "".join(cards), anchor="research"))
 
     if d.news:
         rows = []
@@ -653,13 +730,21 @@ def build_index(cfg, d):
         inner += '<a class="more" href="publications.html">All %d publications &rarr;</a>' % len(d.publications)
         out.append(section("Selected publications", "", inner))
 
+    gal = gallery_data(cfg, d)["items"]
+    n_pick = int(opt.get("front_structures", 4) or 0)
+    if gal and n_pick > 0:
+        inner = ('<div class="ggrid gpick" id="gpick" data-n="%d"></div>'
+                 '<a class="more" href="gallery.html">All %d structures &rarr;</a>' % (n_pick, len(gal)))
+        out.append(section("From the structure gallery", "", inner, anchor="structures"))
+
     active = [p for p in d.projects if p["_active"]][:opt["front_projects"]]
     if active:
         rows = []
         for p in active:
             rows.append(
-                '<div class="proj"><div><p class="pt">%s</p><p class="pd">%s</p></div>'
-                '<div class="pr">%s%s</div></div>' % (
+                '<a class="proj" href="project-%s.html"><div><p class="pt">%s</p><p class="pd">%s</p></div>'
+                '<div class="pr">%s%s</div></a>' % (
+                    E(project_slug(p)),
                     E(S(p.get("acronym")) or p["_slug"]),
                     md_inline(S(p.get("short"))),
                     span(p["_start"], p["_end"]),
@@ -667,7 +752,12 @@ def build_index(cfg, d):
         rows.append('<a class="more" href="projects.html">All projects &rarr;</a>')
         out.append(section("Current projects", "", "".join(rows)))
 
-    return page(cfg, "index.html", cfg["site"]["title"], "\n".join(out))
+    # Browser-tab title of the homepage; `site.home_title` if set, otherwise
+    # the plain site title (which the feed etc. keep using either way).
+    home_title = S(cfg["site"].get("home_title")) or cfg["site"]["title"]
+    js = ('<script src="assets/gallery-data.js" defer></script>\n'
+          '<script src="assets/gallery.js" defer></script>') if (gal and n_pick > 0) else ""
+    return page(cfg, "index.html", home_title, "\n".join(out), extra_js=js)
 
 
 # ------------------------------------------------------------- publications
@@ -729,11 +819,12 @@ def build_projects(cfg, d):
         sub = E(p["_slug"]) if S(p.get("acronym")) and p["_slug"] != S(p.get("acronym")) else ""
         img = ('<img class="pimg" src="%s" alt="" loading="lazy">' % E(p["_image_url"])
                if p.get("_image_url") else "")
-        return ('<article class="pcard">%s'
+        href = "project-%s.html" % project_slug(p)
+        return ('<a class="pcard" href="%s">%s'
                 '<div class="pcard-body">'
                 '<header><h3>%s</h3><span class="when">%s</span></header>'
-                '%s<p class="pd">%s</p><p class="pm">%s</p>%s</div></article>'
-                % (img, title, span(p["_start"], p["_end"]),
+                '%s<p class="pd">%s</p><p class="pm">%s</p>%s</div></a>'
+                % (E(href), img, title, span(p["_start"], p["_end"]),
                    ('<p class="psub">%s</p>' % sub) if sub else "",
                    md_inline(S(p.get("short"))),
                    " &middot; ".join(meta),
@@ -767,6 +858,469 @@ def build_projects(cfg, d):
         lead = "Third-party funding and fellowships acquired, %s in total." % money(total)
         out.append(section("Funding", lead, "".join(rows)))
     return page(cfg, "projects.html", "Projects", "\n".join(out))
+
+
+def build_project_page(cfg, d, p):
+    """One detail page per project (project-<slug>.html), linked from its
+    tile on projects.html and the homepage: full description (the note's
+    free-text body), an optional links row (`links:` in the note -- a list
+    of [label, url] pairs, same shape as `nav:` in config.yaml), and the
+    publications that share a topic with it (or are pinned via the note's
+    optional `related_papers:` field).
+    """
+    meta = []
+    if S(p.get("role")):
+        meta.append(E(S(p.get("role"))))
+    if S(p.get("funder")):
+        meta.append(E(S(p.get("funder"))))
+    if money(p.get("amount_eur")):
+        meta.append(money(p.get("amount_eur")))
+    if S(p.get("grant_number")):
+        meta.append("grant " + E(S(p.get("grant_number"))))
+
+    chips = "".join('<span class="chip">%s</span>' % E(t) for t in topics_of(p, cfg))
+    title_plain = S(p.get("acronym")) or p["_slug"]
+    sub = E(p["_slug"]) if S(p.get("acronym")) and p["_slug"] != S(p.get("acronym")) else ""
+    img = ('<img class="pjimg" src="%s" alt="" loading="lazy">' % E(p["_image_url"])
+           if p.get("_image_url") else "")
+
+    head = ('<section class="hero"><div class="wrap">'
+            '<a class="more" href="projects.html">&larr; All projects</a>'
+            '%s<h1 class="name">%s</h1>%s'
+            '<p class="role">%s%s</p>'
+            '%s'
+            '</div></section>' % (
+                img, E(title_plain),
+                ('<p class="psub">%s</p>' % sub) if sub else "",
+                span(p["_start"], p["_end"]),
+                ("<br>" + " &middot; ".join(meta)) if meta else "",
+                ('<div class="chips">%s</div>' % chips) if chips else ""))
+
+    body = md_block(p.get("_body", "")) or ("<p>%s</p>" % md_inline(S(p.get("short"))))
+    out = [head, section("About this project", "", body)]
+    out += links_section(p)
+
+    # Projects ran for a limited time, so shared topics are too loose here:
+    # only papers that name the project in `project:` (or are pinned via
+    # the project note's `related_papers:`) are listed.
+    rel = related_publications(p, d, cfg, use_topics=False)
+    if rel:
+        out.append(section("Related publications", "",
+                           "".join(publication_html(n, cfg) for n in rel)))
+
+    fname = "project-%s.html" % project_slug(p)
+    return fname, page(cfg, "projects.html", title_plain, "\n".join(out),
+                       body_class="page-project")
+
+
+def links_section(entity):
+    """Optional external-links row (`links:` in a project or research-thread
+    note -- a list of [label, url] pairs, same shape as `nav:` in
+    config.yaml), as a one-item list of section HTML, or [] if unset."""
+    raw_links = entity.get("links")
+    if not isinstance(raw_links, list):
+        return []
+    rows = []
+    for item in raw_links:
+        if isinstance(item, (list, tuple)) and len(item) >= 2 and S(item[1]):
+            label, url = S(item[0]) or S(item[1]), S(item[1])
+            rows.append(ext_link(E(url), E(label)))
+    if not rows:
+        return []
+    return [section("Links", "", '<div class="social">%s</div>' % "".join(rows))]
+
+
+def build_thread_page(cfg, d, t):
+    """One detail page per research thread (thread-<slug>.html), linked
+    from its tile on the homepage: the thread's own intro text, an optional
+    links row, and the publications related to it -- by shared `topics:`,
+    or by a paper's own `project:` field naming this thread (see
+    `related_publications`).
+    """
+    title = S(t.get("title")) or t["_slug"]
+    chips = "".join('<span class="chip">%s</span>' % E(x) for x in topics_of(t, cfg))
+    icon = S(t.get("icon"))
+
+    head = ('<section class="hero"><div class="wrap">'
+            '<a class="more" href="index.html#research">&larr; Research</a>'
+            '%s<h1 class="name">%s</h1>'
+            '%s'
+            '</div></section>' % (
+                ('<div class="ic threadicon">%s</div>' % E(icon)) if icon else "",
+                E(title),
+                ('<div class="chips">%s</div>' % chips) if chips else ""))
+
+    body = md_block(t.get("_body", ""))
+    out = [head]
+    if body:
+        out.append(section("About this research", "", body))
+    out += links_section(t)
+
+    rel = related_publications(t, d, cfg)
+    if rel:
+        out.append(section("Related publications", "",
+                           "".join(publication_html(n, cfg) for n in rel)))
+
+    fname = "thread-%s.html" % thread_slug(t)
+    return fname, page(cfg, "index.html", title, "\n".join(out), body_class="page-thread")
+
+
+# ------------------------------------------------------------ structure gallery
+# One structure per paper (optional `structure:` field in the paper note),
+# read here in plain Python and drawn in the browser by assets/gallery.js.
+# Supported: .xyz / extended .xyz (Lattice="..."), VASP POSCAR/CONTCAR
+# (any file named POSCAR*/CONTCAR* or ending in .vasp/.poscar) and simple
+# .cif files (symmetry operations are applied if the file lists them).
+
+# Jmol element colours -- override any of them via `element_colors:` in
+# config.yaml.
+JMOL_COLORS = {
+    "H": "#ffffff", "He": "#d9ffff", "Li": "#cc80ff", "Be": "#c2ff00", "B": "#ffb5b5",
+    "C": "#909090", "N": "#3050f8", "O": "#ff0d0d", "F": "#90e050", "Ne": "#b3e3f5",
+    "Na": "#ab5cf2", "Mg": "#8aff00", "Al": "#bfa6a6", "Si": "#f0c8a0", "P": "#ff8000",
+    "S": "#ffff30", "Cl": "#1ff01f", "Ar": "#80d1e3", "K": "#8f40d4", "Ca": "#3dff00",
+    "Sc": "#e6e6e6", "Ti": "#bfc2c7", "V": "#a6a6ab", "Cr": "#8a99c7", "Mn": "#9c7ac7",
+    "Fe": "#e06633", "Co": "#f090a0", "Ni": "#50d050", "Cu": "#c88033", "Zn": "#7d80b0",
+    "Ga": "#c28f8f", "Ge": "#668f8f", "As": "#bd80e3", "Se": "#ffa100", "Br": "#a62929",
+    "Kr": "#5cb8d1", "Rb": "#702eb0", "Sr": "#00ff00", "Y": "#94ffff", "Zr": "#94e0e0",
+    "Nb": "#73c2c9", "Mo": "#54b5b5", "Ru": "#248f8f", "Rh": "#0a7d8c", "Pd": "#006985",
+    "Ag": "#c0c0c0", "Cd": "#ffd98f", "In": "#a67573", "Sn": "#668080", "Sb": "#9e63b5",
+    "Te": "#d47a00", "I": "#940094", "Xe": "#429eb0", "Cs": "#57178f", "Ba": "#00c900",
+    "La": "#70d4ff", "Ce": "#ffffc7", "Hf": "#4dc2ff", "Ta": "#4da6ff", "W": "#2194d6",
+    "Os": "#266696", "Ir": "#175487", "Pt": "#d0d0e0", "Au": "#ffd123", "Hg": "#b8b8d0",
+    "Tl": "#a6544d", "Pb": "#575961", "Bi": "#9e4fb5", "Rn": "#428296", "U": "#008fff",
+    "Fl": "#b0a0c8", "Og": "#c9759b",
+}
+# Covalent radii (Å, Cordero et al. 2008) -- used for drawing bonds and ball sizes.
+COVALENT_R = {
+    "H": .31, "He": .28, "Li": 1.28, "Be": .96, "B": .84, "C": .76, "N": .71, "O": .66,
+    "F": .57, "Ne": .58, "Na": 1.66, "Mg": 1.41, "Al": 1.21, "Si": 1.11, "P": 1.07,
+    "S": 1.05, "Cl": 1.02, "Ar": 1.06, "K": 2.03, "Ca": 1.76, "Sc": 1.70, "Ti": 1.60,
+    "V": 1.53, "Cr": 1.39, "Mn": 1.39, "Fe": 1.32, "Co": 1.26, "Ni": 1.24, "Cu": 1.32,
+    "Zn": 1.22, "Ga": 1.22, "Ge": 1.20, "As": 1.19, "Se": 1.20, "Br": 1.20, "Kr": 1.16,
+    "Rb": 2.20, "Sr": 1.95, "Y": 1.90, "Zr": 1.75, "Nb": 1.64, "Mo": 1.54, "Ru": 1.46,
+    "Rh": 1.42, "Pd": 1.39, "Ag": 1.45, "Cd": 1.44, "In": 1.42, "Sn": 1.39, "Sb": 1.39,
+    "Te": 1.38, "I": 1.39, "Xe": 1.40, "Cs": 2.44, "Ba": 2.15, "La": 2.07, "Ce": 2.04,
+    "Hf": 1.75, "Ta": 1.70, "W": 1.62, "Os": 1.44, "Ir": 1.41, "Pt": 1.36, "Au": 1.36,
+    "Hg": 1.32, "Tl": 1.45, "Pb": 1.46, "Bi": 1.48, "Rn": 1.50, "U": 1.96, "Fl": 1.43,
+    "Og": 1.57,
+}
+NOBLE = {"He", "Ne", "Ar", "Kr", "Xe", "Rn", "Og"}
+
+
+def _elem(tok):
+    """'Fe1', 'fe', 'FE+2' -> 'Fe'."""
+    m = re.match(r"([A-Za-z]{1,2})", tok.strip())
+    if not m:
+        return None
+    e = m.group(1).capitalize()
+    if e not in COVALENT_R and e[:1] in COVALENT_R:
+        e = e[:1]
+    return e
+
+
+def _frac_to_cart(f, cell):
+    return [f[0] * cell[0][k] + f[1] * cell[1][k] + f[2] * cell[2][k] for k in range(3)]
+
+
+def read_xyz(text):
+    lines = text.splitlines()
+    n = int(lines[0].split()[0])
+    comment = lines[1] if len(lines) > 1 else ""
+    atoms = []
+    for ln in lines[2:2 + n]:
+        p = ln.split()
+        if len(p) >= 4:
+            atoms.append([_elem(p[0]), float(p[1]), float(p[2]), float(p[3])])
+    cell = None
+    m = re.search(r'Lattice\s*=\s*"([^"]+)"', comment)
+    if m:
+        v = [float(x) for x in m.group(1).split()]
+        if len(v) == 9:
+            cell = [v[0:3], v[3:6], v[6:9]]
+    return atoms, cell
+
+
+def read_poscar(text):
+    lines = [l for l in text.splitlines()]
+    scale = float(lines[1].split()[0])
+    cell = [[float(x) * scale for x in lines[i].split()[:3]] for i in (2, 3, 4)]
+    i = 5
+    names = lines[i].split()
+    if all(re.match(r"^\d+$", t) for t in names):
+        # VASP 4 format: no element line; try the comment line instead
+        counts, names = [int(t) for t in names], lines[0].split()
+        i += 1
+    else:
+        counts = [int(t) for t in lines[i + 1].split()]
+        i += 2
+    if lines[i].strip()[:1] in "sS":        # Selective dynamics
+        i += 1
+    direct = lines[i].strip()[:1] in "dD"
+    i += 1
+    atoms = []
+    for name, c in zip(names, counts):
+        for _ in range(c):
+            v = [float(x) for x in lines[i].split()[:3]]
+            i += 1
+            xyz = _frac_to_cart(v, cell) if direct else [x * scale for x in v]
+            atoms.append([_elem(name)] + xyz)
+    return atoms, cell
+
+
+def _cif_num(s):
+    return float(re.sub(r"\(.*\)", "", s))
+
+
+def _symop(expr):
+    """'-x+1/2' -> function of (x, y, z)."""
+    terms = re.findall(r"([+-]?)\s*([0-9./]*)\s*\*?\s*([xyz]?)", expr.replace(" ", "").lower())
+    coef, const = [0.0, 0.0, 0.0], 0.0
+    for sign, num, var in terms:
+        if not num and not var:
+            continue
+        val = 1.0
+        if num:
+            if "/" in num:
+                a, b = num.split("/")
+                val = float(a) / float(b)
+            else:
+                val = float(num)
+        if sign == "-":
+            val = -val
+        if var:
+            coef["xyz".index(var)] += val
+        else:
+            const += val
+    return lambda p: coef[0] * p[0] + coef[1] * p[1] + coef[2] * p[2] + const
+
+
+def read_cif(text):
+    def val(key):
+        m = re.search(r"(?m)^\s*%s\s+(\S+)" % re.escape(key), text)
+        return _cif_num(m.group(1)) if m else None
+    a, b, c = val("_cell_length_a"), val("_cell_length_b"), val("_cell_length_c")
+    al, be, ga = [math.radians(val(k) or 90.0) for k in
+                  ("_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma")]
+    cx = (math.cos(al) - math.cos(be) * math.cos(ga)) / math.sin(ga)
+    cell = [[a, 0, 0], [b * math.cos(ga), b * math.sin(ga), 0],
+            [c * math.cos(be), c * cx, c * math.sqrt(max(0.0, 1 - math.cos(be) ** 2 - cx ** 2))]]
+    # loops
+    ops, sites = [], []
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        if lines[i].strip() == "loop_":
+            i += 1
+            keys = []
+            while i < len(lines) and lines[i].strip().startswith("_"):
+                keys.append(lines[i].strip().split()[0])
+                i += 1
+            rows = []
+            while i < len(lines) and lines[i].strip() and not lines[i].strip().startswith(("_", "loop_", "data_")):
+                rows.append(lines[i].strip())
+                i += 1
+            if any(k.endswith(("_symmetry_equiv_pos_as_xyz", "_space_group_symop_operation_xyz")) for k in keys):
+                for r in rows:
+                    m = re.search(r"['\"]([^'\"]+)['\"]", r)
+                    s = m.group(1) if m else r.split(None, 1)[-1]
+                    parts = s.split(",")
+                    if len(parts) == 3:
+                        ops.append([_symop(p) for p in parts])
+            elif "_atom_site_fract_x" in keys:
+                ix, iy, iz = (keys.index("_atom_site_fract_x"), keys.index("_atom_site_fract_y"),
+                              keys.index("_atom_site_fract_z"))
+                ie = keys.index("_atom_site_type_symbol") if "_atom_site_type_symbol" in keys \
+                    else keys.index("_atom_site_label")
+                for r in rows:
+                    p = r.split()
+                    if len(p) > max(ix, iy, iz, ie):
+                        sites.append((_elem(p[ie]), [_cif_num(p[ix]), _cif_num(p[iy]), _cif_num(p[iz])]))
+            continue
+        i += 1
+    if not ops:
+        ops = [[lambda p: p[0], lambda p: p[1], lambda p: p[2]]]
+    atoms, seen = [], []
+    for el, f in sites:
+        for op in ops:
+            g = [op[k](f) % 1.0 for k in range(3)]
+            if any(sum(min(abs(g[k] - s[k]), 1 - abs(g[k] - s[k])) ** 2 for k in range(3)) < 1e-6 for s in seen):
+                continue
+            seen.append(g)
+            atoms.append([el] + _frac_to_cart(g, cell))
+    return atoms, cell
+
+
+def read_structure(path):
+    """Return (atoms, cell) with atoms = [[element, x, y, z], ...] in Å and
+    cell = three lattice vectors (or None for a molecule)."""
+    with io.open(path, encoding="utf-8", errors="replace") as fh:
+        text = fh.read()
+    name = os.path.basename(path).lower()
+    if name.endswith(".cif"):
+        return read_cif(text)
+    if name.endswith((".vasp", ".poscar")) or name.startswith(("poscar", "contcar")):
+        return read_poscar(text)
+    return read_xyz(text)
+
+
+def with_cell_images(atoms, cell, eps=1e-3):
+    """Wrap atoms into the cell and add their periodic images on the cell
+    faces, edges and corners -- so a two-atom B2 cell is drawn with all eight
+    corner atoms, the way crystal structures are usually shown."""
+    m = cell
+    det = (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+           m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+           m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]))
+    if abs(det) < 1e-9:
+        return atoms
+    inv = [[(m[1][1] * m[2][2] - m[1][2] * m[2][1]) / det, (m[0][2] * m[2][1] - m[0][1] * m[2][2]) / det,
+            (m[0][1] * m[1][2] - m[0][2] * m[1][1]) / det],
+           [(m[1][2] * m[2][0] - m[1][0] * m[2][2]) / det, (m[0][0] * m[2][2] - m[0][2] * m[2][0]) / det,
+            (m[0][2] * m[1][0] - m[0][0] * m[1][2]) / det],
+           [(m[1][0] * m[2][1] - m[1][1] * m[2][0]) / det, (m[0][1] * m[2][0] - m[0][0] * m[2][1]) / det,
+            (m[0][0] * m[1][1] - m[0][1] * m[1][0]) / det]]
+    out = []
+    for a in atoms:
+        r = a[1:4]
+        f = [(r[0] * inv[0][k] + r[1] * inv[1][k] + r[2] * inv[2][k]) % 1.0 for k in range(3)]
+        f = [0.0 if x > 1 - eps else x for x in f]
+        shifts = [[0.0, 1.0] if x < eps else [0.0] for x in f]
+        for sx in shifts[0]:
+            for sy in shifts[1]:
+                for sz in shifts[2]:
+                    out.append([a[0]] + _frac_to_cart([f[0] + sx, f[1] + sy, f[2] + sz], cell))
+    return out
+
+
+def resolve_structure(vault, note, cfg):
+    """`structure:` relative to the vault root, to the paper note's folder,
+    or a bare filename searched in `structure_search_dirs` (config.yaml)."""
+    v = S(note.get("structure")).strip()
+    m = re.match(r"^!?\[\[([^\]|]+)(?:\|[^\]]*)?\]\]$", v)
+    if m:
+        v = m.group(1).strip()
+    if not v:
+        return None
+    cands = [os.path.join(vault, v), os.path.join(os.path.dirname(note["_path"]), v)]
+    cands += [os.path.join(vault, d, v) for d in L(cfg.get("structure_search_dirs"))]
+    for c in cands:
+        if os.path.isfile(c):
+            return c
+    return None
+
+
+def structure_record(note, cfg, d):
+    """Everything the gallery page needs for one paper, or None."""
+    vault = os.path.expanduser(cfg["vault"])
+    path = resolve_structure(vault, note, cfg)
+    if not path:
+        if S(note.get("structure")):
+            print("  ! structure file not found for: %s" % S(note.get("publication"))[:70])
+        return None
+    try:
+        atoms, cell = read_structure(path)
+    except Exception as exc:                       # a broken file must not stop the build
+        print("  ! could not read %s (%s)" % (os.path.basename(path), exc))
+        return None
+    atoms = [a for a in atoms if a[0]]
+    if not atoms:
+        return None
+    if cell and S(note.get("structure_images")).lower() not in ("no", "false", "none", "0"):
+        atoms = with_cell_images(atoms, cell)
+    # centre the structure (cell centre for crystals, centroid for molecules)
+    if cell:
+        c = [sum(cell[i][k] for i in range(3)) / 2.0 for k in range(3)]
+    else:
+        c = [sum(a[k + 1] for a in atoms) / len(atoms) for k in range(3)]
+    atoms = [[a[0]] + [round(a[k + 1] - c[k], 4) for k in range(3)] for a in atoms]
+    bonds_opt = S(note.get("structure_bonds")).lower()
+    view = [float(x) for x in re.findall(r"-?\d+(?:\.\d+)?", S(note.get("structure_view")))][:2]
+    # the homepage tiles this paper belongs to (same rule as the tile pages)
+    tiles = [S(t.get("title")) for t in d.threads
+             if any(n is note for n in related_publications(t, d, cfg))]
+    els = sorted({a[0] for a in atoms})
+    return {
+        "label": S(note.get("structure_label")),          # optional; empty = no label
+        "caption": S(note.get("structure_caption")),
+        "title": S(note.get("publication")),
+        "authors": highlight_authors(note.get("authors"), cfg["highlight_author"]),
+        "journal": S(note.get("journal")), "volume": S(note.get("volume")),
+        "pages": S(note.get("pages")), "year": I(note.get("pubyear")),
+        "doi": doi_url(note), "atoms": atoms,
+        "cell": [[round(x, 4) for x in v] for v in cell] if cell else None,
+        "bonds": 0 if bonds_opt in ("none", "no", "false", "0") else
+                 (float(bonds_opt) if re.match(r"^\d+(\.\d+)?$", bonds_opt) else 1.15),
+        "view": view if len(view) == 2 else None,
+        "elements": els, "tiles": tiles, "topics": topics_of(note, cfg),
+        "n": len(atoms),
+    }
+
+
+def gallery_data(cfg, d):
+    """All gallery records plus colours/radii; also stored as the script
+    assets/gallery-data.js, which gallery.html and the homepage share."""
+    if "_gallery" in cfg:
+        return cfg["_gallery"]
+    recs, seen = [], set()
+    for n in d.publications:
+        r = structure_record(n, cfg, d)
+        if not r:
+            continue
+        base = re.sub(r"[^A-Za-z0-9_-]+", "-", os.path.splitext(os.path.basename(
+            S(n.get("structure")).strip("[]!")))[0]).strip("-") or "s"
+        key, i = base, 2
+        while key in seen:
+            key, i = "%s-%d" % (base, i), i + 1
+        seen.add(key)
+        r["key"] = key
+        recs.append(r)
+    colors = dict(JMOL_COLORS)
+    for k, v in (cfg.get("element_colors") or {}).items():
+        colors[_elem(str(k)) or str(k)] = S(v)
+    data = {"items": recs, "colors": colors, "radii": COVALENT_R, "noble": sorted(NOBLE)}
+    cfg["_gallery"] = data
+    cfg["_gallery_js"] = ("/* generated by build.py -- structure data for gallery.js */\n"
+                          "window.GDATA=%s;\n" % json.dumps(data, ensure_ascii=False))
+    return data
+
+
+def build_gallery(cfg, d):
+    data = gallery_data(cfg, d)
+    recs = data["items"]
+    intro = cfg.get("gallery_intro") or (
+        "Molecules and materials from my papers, one structure per paper. "
+        "Click a structure for the reference.")
+    if recs:
+        tiles = sorted({t for r in recs for t in r["tiles"]})
+        els = sorted({e for r in recs for e in r["elements"]})
+        bar = ('<div class="gbar">'
+               '<input type="search" id="gq" placeholder="Search structures, titles, journals" aria-label="Search">'
+               '<select id="gtile" aria-label="Research area"><option value="">All research areas</option>%s</select>'
+               '<select id="gel" aria-label="Contains element"><option value="">Any element</option>%s</select>'
+               '<select id="gsort" aria-label="Sort">'
+               '<option value="new">Newest first</option><option value="old">Oldest first</option>'
+               '<option value="name">Title A–Z</option><option value="size">Largest first</option></select>'
+               '<span class="gcount" id="gcount"></span></div>') % (
+            "".join('<option>%s</option>' % E(t) for t in tiles),
+            "".join('<option>%s</option>' % E(e) for e in els))
+        body = bar + '<div class="ggrid" id="ggrid"></div>'
+    else:
+        body = ('<p class="seclead">No structures yet. Add a <code>structure:</code> field '
+                '(an .xyz, POSCAR or .cif file) to a paper note and rebuild.</p>')
+    dialog = ('<dialog id="gdlg" class="gdlg" aria-label="Structure details"><div class="gm">'
+              '<div class="gview" id="gview"><svg id="gsvg" viewBox="-1 -1 2 2" role="img"></svg>'
+              '<span class="ghint">drag to rotate</span></div>'
+              '<div class="gtext"><span class="gsys" id="gsys"></span><h3 id="gtitle"></h3>'
+              '<p class="gau" id="gau"></p><p class="gj" id="gj"></p><p class="gcap" id="gcap"></p>'
+              '<div class="gbtns"><a class="gpri" id="gdoi" href="#" target="_blank" '
+              'rel="noopener noreferrer">Open paper</a>'
+              '<a href="publications.html">All publications</a>'
+              '<button type="button" id="gclose">Close</button></div></div></div></dialog>')
+    content = section("Structure gallery", intro, body) + dialog
+    return page(cfg, "gallery.html", "Structure gallery", content,
+                extra_js='<script src="assets/gallery-data.js"></script>\n'
+                         '<script src="assets/gallery.js"></script>', body_class="page-gallery")
 
 
 # -------------------------------------------------------------------- talks
@@ -838,10 +1392,10 @@ def build_cv(cfg, d):
 
     contact = []
     if S(prof.get("email")):
-        contact.append('<a href="mailto:%s" rel="noopener">Email</a>' % obf_mail(S(prof.get("email"))))
+        contact.append(ext_link("mailto:%s" % obf_mail(S(prof.get("email"))), "Email", False))
     for label, value in (("ORCID", S(prof.get("orcid"))), ("Google Scholar", S(prof.get("scholar")))):
         if value:
-            contact.append('<a href="%s" rel="noopener">%s</a>' % (E(value), E(label)))
+            contact.append(ext_link(E(value), E(label)))
     pdf_link = '<a href="cv.pdf" rel="noopener">Download PDF</a>' if cfg.get("_cv_pdf_ok") else ""
     md_link = '<a href="cv.md" rel="noopener">Download Markdown</a>' if cfg.get("_cv_md_ok") else ""
     head = """<section class="hero cvhead"><div class="wrap">
@@ -988,35 +1542,63 @@ def build_contact(cfg, d):
 
     links = social_links(prof, include_cv=True)
     if links:
-        row = "".join('<a href="%s" rel="noopener">%s</a>' % (href, text) for href, text in links)
+        row = "".join(ext_link(href, text, ext) for href, text, ext in links)
         out.append(section("Get in touch", "", '<div class="social">%s</div>' % row))
 
     imp = cfg.get("impressum") or {}
-    if imp.get("enabled"):
-        parts = []
-        name = S(imp.get("responsible_name")) or S(prof.get("name"))
-        if name:
-            parts.append("<p><strong>%s</strong></p>" % E(name))
-        addr = [S(x) for x in (imp.get("address_lines") or []) if S(x)]
-        if not addr and S(prof.get("address_line")):
-            addr = [a.strip() for a in S(prof.get("address_line")).split(",") if a.strip()]
-        if addr:
-            parts.append("<p>%s</p>" % "<br>".join(E(a) for a in addr))
-        email = S(imp.get("email")) or S(prof.get("email"))
-        if email:
-            parts.append('<p><a href="mailto:%s" rel="noopener">%s</a></p>'
-                         % (obf_mail(email), obf_mail(email)))
-        if S(imp.get("phone")):
-            parts.append("<p>%s</p>" % E(S(imp.get("phone"))))
-        if S(imp.get("extra")):
-            parts.append(md_block(S(imp.get("extra"))))
-        if parts:
-            out.append(section("Impressum", "", "".join(parts), anchor="impressum"))
+    addr = impressum_address(cfg, d)
+    if addr:
+        out.append(section("Postal address", "",
+                           "<p>%s</p><p><a href=\"impressum.html\">Impressum &amp; Datenschutz</a></p>"
+                           % "<br>".join(E(a) for a in addr)))
 
     if not out:
         out.append(section("Contact", "", "<p>No contact details configured yet.</p>"))
 
     return page(cfg, "contact.html", "Contact", "\n".join(out))
+
+
+def impressum_address(cfg, d):
+    imp = cfg.get("impressum") or {}
+    addr = [S(x) for x in (imp.get("address_lines") or []) if S(x)]
+    if not addr and S(d.profile.get("address_line")):
+        addr = [a.strip() for a in S(d.profile.get("address_line")).split(",") if a.strip()]
+    return addr
+
+
+def build_legal(cfg, d):
+    """impressum.html: Impressum (config.yaml -> impressum) and the privacy
+    policy (templates/datenschutz.html). Linked from every page footer."""
+    prof = d.profile
+    imp = cfg.get("impressum") or {}
+    name = S(imp.get("responsible_name")) or S(prof.get("name"))
+    addr = impressum_address(cfg, d)
+    email = S(imp.get("email")) or S(prof.get("email"))
+    mail = ('<a href="mailto:%s" rel="noopener">%s</a>' % (obf_mail(email), obf_mail(email))) if email else ""
+    out = []
+    if imp.get("enabled"):
+        parts = ['<p class="seclead">Angaben gem&auml;&szlig; &sect; 5 DDG</p>']
+        parts.append("<p><strong>%s</strong><br>%s</p>" % (E(name), "<br>".join(E(a) for a in addr)))
+        contact = []
+        if email:
+            contact.append("E-Mail: " + mail)
+        if S(imp.get("phone")):
+            contact.append("Telefon: " + E(S(imp.get("phone"))))
+        if contact:
+            parts.append("<h3>Kontakt</h3><p>%s</p>" % "<br>".join(contact))
+        parts.append("<h3>Verantwortlich f&uuml;r den Inhalt nach &sect; 18 Abs. 2 MStV</h3><p>%s, Anschrift wie oben</p>" % E(name))
+        if S(imp.get("extra")):
+            parts.append(md_block(S(imp.get("extra"))))
+        out.append(section("Impressum", "", '<div class="legal">%s</div>' % "".join(parts), anchor="impressum"))
+    tpl = os.path.join(HERE, "templates", "datenschutz.html")
+    if os.path.isfile(tpl):
+        with io.open(tpl, encoding="utf-8") as fh:
+            txt = re.sub(r"<!--.*?-->", "", fh.read(), flags=re.S)
+        txt = (txt.replace("{{name}}", E(name)).replace("{{address}}", "<br>".join(E(a) for a in addr))
+                  .replace("{{email}}", mail))
+        out.append(section("Datenschutzerklärung", "",
+                           '<div class="legal">%s</div>' % txt, anchor="datenschutz"))
+    return page(cfg, "impressum.html", "Impressum & Datenschutz", "\n".join(out))
 
 
 # ===========================================================================
@@ -1659,21 +2241,48 @@ def main():
         "teaching.html": build_teaching(cfg, d),
         "cv.html": build_cv(cfg, d),
         "contact.html": build_contact(cfg, d),
+        "gallery.html": build_gallery(cfg, d),
+        "impressum.html": build_legal(cfg, d),
     }
+    for p in d.projects:
+        fname, text = build_project_page(cfg, d, p)
+        pages[fname] = text
+    for t in d.threads:
+        fname, text = build_thread_page(cfg, d, t)
+        pages[fname] = text
+    # Remove detail pages left over from renamed or deleted projects/tiles
+    # (e.g. thread-old-title.html), so no dead page stays online.
+    for fn in os.listdir(out_dir):
+        if re.match(r"^(project|thread)-.+\.html$", fn) and fn not in pages:
+            try:
+                os.remove(os.path.join(out_dir, fn))
+                print("  removed stale page: %s" % fn)
+            except OSError as exc:
+                print("  could not remove stale page %s (%s)" % (fn, exc))
     for name, text in pages.items():
         with io.open(os.path.join(out_dir, name), "w", encoding="utf-8") as fh:
             fh.write(text)
         if args.verbose:
             print("  wrote %s (%d kB)" % (name, len(text) // 1024))
+    if d.projects:
+        print("  project pages : %d" % len(d.projects))
+    if d.threads:
+        print("  thread pages  : %d" % len(d.threads))
 
     # assets
     src_assets = os.path.join(HERE, "assets")
     dst_assets = os.path.join(out_dir, "assets")
     os.makedirs(dst_assets, exist_ok=True)
-    for fn in os.listdir(src_assets):
-        s = os.path.join(src_assets, fn)
-        if os.path.isfile(s):
-            shutil.copy2(s, os.path.join(dst_assets, fn))
+    for root, _dirs, files in os.walk(src_assets):
+        rel = os.path.relpath(root, src_assets)
+        dst = dst_assets if rel == "." else os.path.join(dst_assets, rel)
+        os.makedirs(dst, exist_ok=True)
+        for fn in files:
+            shutil.copy2(os.path.join(root, fn), os.path.join(dst, fn))
+    # structure data shared by gallery.html and the homepage picks
+    if cfg.get("_gallery_js"):
+        with io.open(os.path.join(dst_assets, "gallery-data.js"), "w", encoding="utf-8") as fh:
+            fh.write(cfg["_gallery_js"])
 
     # profile photo: copy from the vault when the profile note points at one
     photo = S(d.profile.get("photo"))

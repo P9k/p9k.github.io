@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="alternate" type="application/rss+xml" title="{{footer_name}}" href="feed.xml">
 <meta name="color-scheme" content="light dark">
@@ -20,7 +20,7 @@ if(!t){try{t=localStorage.getItem('theme');}catch(e){}}
 if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
 {{extra_head}}
 </head>
-<body class="{{body_class}}" data-bg="{{bg}}">
+<body class="{{body_class}}" data-bg="{{bg}}" data-bg-motion="{{bgmotion}}">
 
 <canvas id="bg-anim" aria-hidden="true"></canvas>
 
@@ -43,7 +43,7 @@ if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}})();</script>
 
 <footer class="site"><div class="wrap">
   <span>&copy; {{year}} {{footer_name}} &middot; {{footer_location}}</span>
-  <span>Last updated {{built}}</span>
+  <span class="flinks"><a href="impressum.html">Impressum</a> &middot; <a href="impressum.html#datenschutz">Datenschutz</a> &middot; Last updated {{built}}</span>
 </div></footer>
 
 <script src="assets/site.js"></script>
