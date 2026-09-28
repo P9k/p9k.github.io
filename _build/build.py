@@ -514,6 +514,18 @@ def highlight_authors(authors, pattern):
         return text
 
 
+def angew_ref(journal, year, vol, pages):
+    """Reference in Angewandte Chemie style (HTML):
+    <i>Acta Mater.</i> <b>2025</b>, <i>298</i>, 121398."""
+    journal, year, vol, pages = S(journal), S(year), S(vol), S(pages)
+    if vol in ("0", "0.0"):
+        vol = ""
+    head = " ".join(x for x in [("<i>%s</i>" % E(journal)) if journal else "",
+                                ("<b>%s</b>" % E(year)) if year else ""] if x)
+    parts = [x for x in [head, ("<i>%s</i>" % E(vol)) if vol else "", E(pages)] if x]
+    return (", ".join(parts) + ".") if parts else ""
+
+
 def publication_html(n, cfg, with_bibtex=True, gutter="year"):
     title = E(S(n.get("publication")) or n.get("_slug"))
     authors = highlight_authors(n.get("authors"), cfg["highlight_author"])
@@ -523,16 +535,7 @@ def publication_html(n, cfg, with_bibtex=True, gutter="year"):
     year = S(n.get("pubyear"))
     url = doi_url(n)
 
-    ref = []
-    if journal:
-        ref.append("<i>%s</i>" % E(journal))
-    if vol:
-        ref.append("<b>%s</b>" % E(vol))
-    if pages:
-        ref.append(E(pages))
-    ref = ", ".join(ref)
-    if year and ref:
-        ref += " (%s)" % E(year)
+    ref = angew_ref(journal, year, vol, pages)
 
     badges = ""
     if S(n.get("openaccess")).lower() in ("true", "yes", "1"):
@@ -1526,11 +1529,8 @@ def build_cv(cfg, d):
                          '<p class="t">%s</p><p class="a">%s</p><p class="j">%s</p></div></div>'
                          % (total - i, E(S(n.get("publication"))),
                             highlight_authors(n.get("authors"), cfg["highlight_author"]),
-                            " &middot; ".join(x for x in [
-                                ("<i>%s</i>" % E(S(n.get("journal")))) if S(n.get("journal")) else "",
-                                ("<b>%s</b>, %s" % (E(S(n.get("volume"))), E(S(n.get("pages")))))
-                                if S(n.get("volume")) else E(S(n.get("pages"))),
-                                E(S(n.get("pubyear")))] if x)))
+                            angew_ref(n.get("journal"), n.get("pubyear"),
+                                      n.get("volume"), n.get("pages"))))
         out.append(section("Peer-reviewed journal articles",
                            "%d articles." % total, "".join(items)))
 

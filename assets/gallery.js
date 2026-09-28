@@ -207,12 +207,14 @@
     sys.hidden = !it.label;
     document.getElementById("gtitle").innerHTML = chem(it.title);
     document.getElementById("gau").innerHTML = it.authors;     // already escaped by build.py
-    var ref = [];
-    if (it.journal) ref.push("<i>" + esc(it.journal) + "</i>");
-    if (it.year) ref.push("<b>" + it.year + "</b>");
-    if (it.volume) ref.push("<i>" + esc(it.volume) + "</i>");
+    // Angewandte Chemie style: <i>Acta Mater.</i> <b>2025</b>, <i>298</i>, 121398.
+    var head = [], ref = [];
+    if (it.journal) head.push("<i>" + esc(it.journal) + "</i>");
+    if (it.year) head.push("<b>" + it.year + "</b>");
+    if (head.length) ref.push(head.join(" "));
+    if (it.volume && it.volume !== "0") ref.push("<i>" + esc(it.volume) + "</i>");
     if (it.pages) ref.push(esc(it.pages));
-    document.getElementById("gj").innerHTML = ref.join(", ");
+    document.getElementById("gj").innerHTML = ref.length ? ref.join(", ") + "." : "";
     var cap = document.getElementById("gcap");
     cap.innerHTML = chem(it.caption);
     cap.hidden = !it.caption;
