@@ -1,23 +1,13 @@
 [
  {
-  "title": "2025 SoSe TUHH H2-Technik",
+  "title": "TUHH H2-Technik",
   "institution": "Technische Universität Hamburg (TUHH)",
   "role": "Co-lecturer",
   "level": "MSc",
-  "term": "2025 SoSe",
-  "year_start": "2025",
-  "year_end": "2025",
-  "location": "Hamburg"
- },
- {
-  "title": "Hydrogen Technology (Lectureship)",
-  "institution": "Technische Hochschule Mittelhessen",
-  "role": "Lecturer",
-  "level": "BSc/MSc",
   "term": "",
-  "year_start": "2023",
+  "year_start": "2025",
   "year_end": "",
-  "location": "Gießen"
+  "location": "Hamburg"
  },
  {
   "title": "Summer School on Computational Chemistry — Tutor",
@@ -28,6 +18,16 @@
   "year_start": "2019",
   "year_end": "2019",
   "location": "Reduit"
+ },
+ {
+  "title": "Hydrogen Technology (Lectureship)",
+  "institution": "Technische Hochschule Mittelhessen",
+  "role": "Lecturer",
+  "level": "BSc/MSc",
+  "term": "",
+  "year_start": "2014",
+  "year_end": "2015",
+  "location": "Gießen"
  },
  {
   "title": "Modern Methods in Quantum Chemistry (Workshop Series)",

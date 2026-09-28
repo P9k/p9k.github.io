@@ -170,6 +170,8 @@ def year_of(value):
 
 def span(start, end, open_label="present"):
     a, b = fmt_date(start), fmt_date(end)
+    if a and b and a == b:          # same year/date: "2019", not "2019 – 2019"
+        return a
     if a and b:
         return "%s &ndash; %s" % (a, b)
     if a:

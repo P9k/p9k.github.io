@@ -114,17 +114,17 @@ Conceptualization and main organizer, Marburg, Germany
 
 ## Teaching
 
-**2025 SoSe**  
+**2025 – present**  
 Hydrogen Technology  
 Co-lecturer, Technische Universität Hamburg (TUHH), Hamburg
 
-**2023 – present**  
-Lectureship  
-Lecturer, Technische Hochschule Mittelhessen, Gießen
-
-**2019 – 2019**  
+**2019**  
 Knowledge for Tomorrow – Cooperative Research Projects in Sub-Saharan Africa (Volkswagen-Stiftung)  
 Tutor, University of Mauritius, Reduit
+
+**2014 – 2015**  
+Lectureship  
+Lecturer, Technische Hochschule Mittelhessen, Gießen
 
 **2014 – 2019**  
 Hands-on workshops on electronic structure methods  
