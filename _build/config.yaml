@@ -18,7 +18,7 @@ vault:
 output: "."
 
 site:
-  url: "https://p9k.github.io"          # used for sitemap.xml and feed.xml
+  url: "https://pauljerabek.de"          # used for sitemap.xml and feed.xml
   title: "Paul Jerabek"
   home_title: "Paul Jerabek - Personal Website"   # browser-tab title of the homepage only
   description: "Multiscale simulation of metal hydrides for hydrogen storage."
