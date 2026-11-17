@@ -122,6 +122,13 @@ class PublicationTests(unittest.TestCase):
         self.assertIn(r"\textit{Science}, \textbf{2012}, \textit{337}, 1526.", lines[1])
 
 
+    def test_empty_highlight_pattern_leaves_authors_intact(self):
+        out = cv.publications_tex([{"publication": "T", "authors": "A & B",
+                                    "journal": "J", "pubyear": 2020}], "")
+        self.assertIn(r"``T'': A \& B, \textit{J}", out)
+        self.assertNotIn(r"\textbf{}", out)
+
+
 class WriteTests(unittest.TestCase):
     def test_write_creates_files(self):
         d = types.SimpleNamespace(funding=[], service=[], talks=[], publications=[],

@@ -1716,6 +1716,8 @@ def highlight_authors_tex(authors, pattern):
     text = tex_escape(authors)
     if not text:
         return ""
+    if not pattern:          # an empty regex would match between every character
+        return text
     try:
         return re.sub("(%s)" % pattern, r"\\textbf{\1}", text)
     except re.error:
