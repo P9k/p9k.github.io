@@ -52,14 +52,14 @@ sources:
   papers:    "20-Arbeit/Paper/Paper"
   talks:     "20-Arbeit/Vorträge/Vortragssammlung"
   projects:  "20-Arbeit/Projekte/_Projekte"
-  funding:   "20-Arbeit/Organisation/Karriere/Förderungen"
-  teaching:  "20-Arbeit/Lehre"
-  positions: "20-Arbeit/Organisation/Karriere/Stationen"
-  education: "20-Arbeit/Organisation/Karriere/Ausbildung"
-  service:   "20-Arbeit/Organisation/Karriere/Service"
-  research:  "20-Arbeit/Organisation/Karriere/Forschung"
-  news:      "20-Arbeit/Organisation/Karriere/News"
-  profile:   "20-Arbeit/Organisation/Karriere/CV-Profil.md"
+  funding:   "20-Arbeit/Lebenslauf/Förderungen"
+  teaching:  "20-Arbeit/Lebenslauf/Lehre"
+  positions: "20-Arbeit/Lebenslauf/Stationen"
+  education: "20-Arbeit/Lebenslauf/Ausbildung"
+  service:   "20-Arbeit/Lebenslauf/Service"
+  research:  "20-Arbeit/Lebenslauf/Forschung"
+  news:      "20-Arbeit/Lebenslauf/News"
+  profile:   "20-Arbeit/Lebenslauf/CV-Profil.md"
 
 options:
   # Number of entries shown on the front page.
