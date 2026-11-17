@@ -2221,7 +2221,13 @@ def main():
     ap.add_argument("--output", default=None,
                     help="override the output folder from the configuration file")
     ap.add_argument("--verbose", "-v", action="store_true")
+    ap.add_argument("--cv-out", default=None,
+                    help="also write the moderncv list sections to DIR/generated/")
+    ap.add_argument("--cv-only", action="store_true",
+                    help="with --cv-out: write only the CV files, not the website")
     args = ap.parse_args()
+    if args.cv_only and not args.cv_out:
+        ap.error("--cv-only needs --cv-out DIR")
 
     with io.open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
@@ -2237,6 +2243,14 @@ def main():
     print("Reading vault   : %s" % vault)
     d = collect(cfg)
     cfg["_profile"] = d.profile
+
+    if args.cv_out:
+        from cv_moderncv import write_cv_moderncv
+        cv_dir = os.path.abspath(args.cv_out)
+        print("CV files written: %d -> %s" % (write_cv_moderncv(d, cfg, cv_dir),
+                                               os.path.join(cv_dir, "generated")))
+        if args.cv_only:
+            return
 
     print("  publications  : %d" % len(d.publications))
     print("  talks         : %d" % len(d.talks))
