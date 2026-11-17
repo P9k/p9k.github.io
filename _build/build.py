@@ -1467,7 +1467,7 @@ def build_cv(cfg, d):
     if d.teaching:
         out.append(section("Teaching", "", rows(
             d.teaching,
-            lambda t: E(S(t.get("term")) or span(S(t.get("year_start")), S(t.get("year_end")))),
+            lambda t: E(S(t.get("term"))) or span(S(t.get("year_start")), S(t.get("year_end"))),
             lambda t: '<p class="tt">%s</p><p class="tw">%s</p>' % (
                 E(S(t.get("course")) or S(t.get("title"))),
                 " &middot; ".join(E(x) for x in [S(t.get("role")), S(t.get("institution")),
