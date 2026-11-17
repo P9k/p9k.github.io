@@ -1,5 +1,125 @@
 [
  {
+  "title": "IEA Hydrogen TCP Task 51 Meeting — Sendai",
+  "occasion_name": "IEA Hydrogen TCP Task 51 Meeting",
+  "occasion_type": "Expert Meeting",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2026",
+  "month": "10",
+  "city": "Sendai",
+  "country": "Japan",
+  "venue": ""
+ },
+ {
+  "title": "19th International Symposium on Metal-Hydrogen Systems (MH2026)",
+  "occasion_name": "International Symposium on Metal-Hydrogen Systems (MH2026)",
+  "occasion_type": "Conference",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2026",
+  "month": "10",
+  "city": "Sendai",
+  "country": "Japan",
+  "venue": ""
+ },
+ {
+  "title": "IEA Hydrogen TCP Task 51 Meeting — Bologna",
+  "occasion_name": "IEA Hydrogen TCP Task 51 Meeting",
+  "occasion_type": "Expert Meeting",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2026",
+  "month": "6",
+  "city": "Bologna",
+  "country": "Italy",
+  "venue": "University of Bologna"
+ },
+ {
+  "title": "Seminar: University of Canterbury",
+  "occasion_name": "University of Canterbury (CAPE)",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2026",
+  "month": "2",
+  "city": "Christchurch",
+  "country": "New Zealand",
+  "venue": "University of Canterbury"
+ },
+ {
+  "title": "Seminar: TU Dortmund",
+  "occasion_name": "TU Dortmund University",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2026",
+  "month": "1",
+  "city": "Dortmund",
+  "country": "Germany",
+  "venue": "TU Dortmund"
+ },
+ {
+  "title": "Seminar: RWTH Aachen",
+  "occasion_name": "RWTH Aachen University",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2026",
+  "month": "1",
+  "city": "Aachen",
+  "country": "Germany",
+  "venue": "RWTH Aachen"
+ },
+ {
+  "title": "Seminar: Curtin University",
+  "occasion_name": "Curtin University",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2025",
+  "month": "09",
+  "city": "Perth",
+  "country": "Australia",
+  "venue": "Curtin University"
+ },
+ {
+  "title": "Hydrogen and Green Iron Delegation — University of Western Australia",
+  "occasion_name": "Hydrogen and Green Iron Delegation to Western Australia",
+  "occasion_type": "Delegation",
+  "category": "Invited Talk",
+  "format": "Talk",
+  "year": "2025",
+  "month": "09",
+  "city": "Perth",
+  "country": "Australia",
+  "venue": "University of Western Australia"
+ },
+ {
+  "title": "IEA Hydrogen TCP Task 51 Meeting — Les Diablerets",
+  "occasion_name": "IEA Hydrogen TCP Task 51 Meeting",
+  "occasion_type": "Expert Meeting",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2025",
+  "month": "6",
+  "city": "Les Diablerets",
+  "country": "Switzerland",
+  "venue": ""
+ },
+ {
+  "title": "Gordon Research Conference Hydrogen-Metal Systems 2025",
+  "occasion_name": "Gordon Research Conference Hydrogen-Metal Systems 2025",
+  "occasion_type": "Conference",
+  "category": "Poster",
+  "format": "Poster",
+  "year": "2025",
+  "month": "6",
+  "city": "Les Diablerets",
+  "country": "Switzerland",
+  "venue": ""
+ },
+ {
   "title": "German-New Zealand WTZ Meeting 2025",
   "occasion_name": "German-New Zealand WTZ Meeting 2025",
   "occasion_type": "Conference",
@@ -10,6 +130,42 @@
   "city": "Wellington",
   "country": "New Zealand",
   "venue": ""
+ },
+ {
+  "title": "IEA Hydrogen TCP Task 51 — Web Meeting",
+  "occasion_name": "IEA Hydrogen TCP Task 51 Meeting (online)",
+  "occasion_type": "Expert Meeting",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2025",
+  "month": "3",
+  "city": "",
+  "country": "",
+  "venue": "online"
+ },
+ {
+  "title": "Seminar: University of Waikato (Computational Materials Science)",
+  "occasion_name": "University of Waikato",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2025",
+  "month": "2",
+  "city": "Hamilton",
+  "country": "New Zealand",
+  "venue": "University of Waikato"
+ },
+ {
+  "title": "Seminar: University of Waikato (Metal Hydrides)",
+  "occasion_name": "University of Waikato",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2025",
+  "month": "2",
+  "city": "Hamilton",
+  "country": "New Zealand",
+  "venue": "University of Waikato"
  },
  {
   "title": "11th International Conference on Advanced Materials and Nanotechnology (AMN11)",
@@ -24,18 +180,6 @@
   "venue": "University of Canterbury"
  },
  {
-  "title": "Seminar: University of Waikato",
-  "occasion_name": "University of Waikato",
-  "occasion_type": "Seminar",
-  "category": "Invited Seminar",
-  "format": "Talk",
-  "year": "2025",
-  "month": "2",
-  "city": "Hamilton",
-  "country": "New Zealand",
-  "venue": "University of Waikato"
- },
- {
   "title": "New Zealand-Germany Energy Dialogue 2024",
   "occasion_name": "New Zealand-Germany Energy Dialogue 2024",
   "occasion_type": "Webinar",
@@ -46,6 +190,18 @@
   "city": "Berlin, Wellington",
   "country": "Germany, New Zealand",
   "venue": "Zoom"
+ },
+ {
+  "title": "Seminar: Freie Universität Berlin",
+  "occasion_name": "Freie Universität Berlin",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2024",
+  "month": "6",
+  "city": "Berlin",
+  "country": "Germany",
+  "venue": "FU Berlin"
  },
  {
   "title": "Seminar: University of Hamburg",
@@ -72,6 +228,18 @@
   "venue": "Palais du Grand Large"
  },
  {
+  "title": "NZ-Germany Energy Dialogue — Economic Advisory Council",
+  "occasion_name": "Meeting of the Economic Advisory Council, New Zealand-Germany Energy Dialogue",
+  "occasion_type": "Meeting",
+  "category": "Invited Talk",
+  "format": "Talk",
+  "year": "2024",
+  "month": "4",
+  "city": "",
+  "country": "",
+  "venue": ""
+ },
+ {
   "title": "German Physical Society (DPG) Spring Meeting 2024",
   "occasion_name": "German Physical Society (DPG) Spring Meeting 2024",
   "occasion_type": "Conference",
@@ -82,6 +250,18 @@
   "city": "Berlin",
   "country": "Germany",
   "venue": "Technical University Berlin"
+ },
+ {
+  "title": "2nd New Zealand Hydrogen Symposium (NZHS-2)",
+  "occasion_name": "2nd New Zealand Hydrogen Symposium (NZHS-2)",
+  "occasion_type": "Conference",
+  "category": "Contributed Talk",
+  "format": "Talk",
+  "year": "2024",
+  "month": "2",
+  "city": "Wellington",
+  "country": "New Zealand",
+  "venue": "Te Papa"
  },
  {
   "title": "Seminar: Massey University",
@@ -106,18 +286,6 @@
   "city": "Hamilton",
   "country": "New Zealand",
   "venue": "University of Waikato"
- },
- {
-  "title": "2nd New Zealand Hydrogen Symposium (NZHS-2)",
-  "occasion_name": "2nd New Zealand Hydrogen Symposium (NZHS-2)",
-  "occasion_type": "Conference",
-  "category": "Contributed Talk",
-  "format": "Talk",
-  "year": "2024",
-  "month": "1",
-  "city": "Wellington",
-  "country": "New Zealand",
-  "venue": "Te Papa"
  },
  {
   "title": "German Physical Society (DPG) Spring Meeting 2023",
@@ -228,8 +396,8 @@
   "venue": "Universität Graz"
  },
  {
-  "title": "Chemiedozenzentagung 2019",
-  "occasion_name": "Chemiedozenzentagung 2019",
+  "title": "Chemiedozententagung 2019",
+  "occasion_name": "Chemiedozententagung 2019",
   "occasion_type": "Conference",
   "category": "Contributed Talk",
   "format": "Talk",
@@ -439,7 +607,7 @@
   "format": "Poster",
   "year": "2015",
   "month": "09",
-  "city": "Postdam",
+  "city": "Potsdam",
   "country": "Germany",
   "venue": "University of Potsdam"
  },

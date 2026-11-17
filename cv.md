@@ -114,6 +114,10 @@ Conceptualization and main organizer, Marburg, Germany
 
 ## Teaching
 
+**2026 – present**  
+Responsible Engineering and Critical Thinking  
+Guest lecturer, TU Dortmund University, Faculty of Electrical Engineering and Information Technology, Dortmund
+
 **2025 – present**  
 Hydrogen Technology  
 Co-lecturer, Technische Universität Hamburg (TUHH), Hamburg
@@ -140,6 +144,10 @@ Student assistant, Philipps-Universität Marburg, Marburg
 
 ## Talks and posters
 
+**Sep 2025**  
+Hydrogen and Green Iron Delegation to Western Australia, Perth, Australia  
+Invited Talk
+
 **May 2025**  
 German-New Zealand WTZ Meeting 2025, Wellington, New Zealand  
 Invited Talk
@@ -150,6 +158,10 @@ Invited Talk
 
 **Jul 2024**  
 New Zealand-Germany Energy Dialogue 2024, Berlin, Wellington, Germany, New Zealand  
+Invited Talk
+
+**Apr 2024**  
+Meeting of the Economic Advisory Council, New Zealand-Germany Energy Dialogue,   
 Invited Talk
 
 **Feb 2023**  
@@ -164,11 +176,31 @@ Invited Talk
 16th International Conference on Computational and Mathematical Methods in Science and Engineering (CMMSE-2016), Rota, Spain  
 Invited Talk
 
+**Oct 2026**  
+IEA Hydrogen TCP Task 51 Meeting, Sendai, Japan  
+Contributed Talk
+
+**Oct 2026**  
+International Symposium on Metal-Hydrogen Systems (MH2026), Sendai, Japan  
+Contributed Talk
+
+**Jun 2026**  
+IEA Hydrogen TCP Task 51 Meeting, Bologna, Italy  
+Contributed Talk
+
+**Jun 2025**  
+IEA Hydrogen TCP Task 51 Meeting, Les Diablerets, Switzerland  
+Contributed Talk
+
+**Mar 2025**  
+IEA Hydrogen TCP Task 51 Meeting (online),   
+Contributed Talk
+
 **Mar 2024**  
 German Physical Society (DPG) Spring Meeting 2024, Berlin, Germany  
 Contributed Talk
 
-**Jan 2024**  
+**Feb 2024**  
 2nd New Zealand Hydrogen Symposium (NZHS-2), Wellington, New Zealand  
 Contributed Talk
 
@@ -181,7 +213,7 @@ European Materials Research Society (E-MRS) Fall Meeting 2022, Warsaw, Poland
 Contributed Talk
 
 **Mar 2019**  
-Chemiedozenzentagung 2019, Koblenz, Germany  
+Chemiedozententagung 2019, Koblenz, Germany  
 Contributed Talk
 
 **Nov 2017**  
@@ -195,6 +227,10 @@ Contributed Talk
 **Aug 2016**  
 New Zealand Institute of Chemistry Conference (NZIC-16), Queenstown, New Zealand  
 Contributed Talk
+
+**Jun 2025**  
+Gordon Research Conference Hydrogen-Metal Systems 2025, Les Diablerets, Switzerland  
+Poster
 
 **May 2024**  
 18th International Symposium of Metal-Hydrogen Systems (MH 2024), Saint-Malo, France  
@@ -213,7 +249,7 @@ Poster
 Poster
 
 **Sep 2015**  
-51st Symposium on Theoretical Chemistry (STC), Postdam, Germany  
+51st Symposium on Theoretical Chemistry (STC), Potsdam, Germany  
 Poster
 
 **Sep 2013**  
@@ -236,8 +272,32 @@ Poster
 46th Symposium on Theoretical Chemistry (STC), Münster, Germany  
 Poster
 
+**Feb 2026**  
+University of Canterbury (CAPE), Christchurch, New Zealand  
+Invited Seminar
+
+**Jan 2026**  
+TU Dortmund University, Dortmund, Germany  
+Invited Seminar
+
+**Jan 2026**  
+RWTH Aachen University, Aachen, Germany  
+Invited Seminar
+
+**Sep 2025**  
+Curtin University, Perth, Australia  
+Invited Seminar
+
 **Feb 2025**  
 University of Waikato, Hamilton, New Zealand  
+Invited Seminar
+
+**Feb 2025**  
+University of Waikato, Hamilton, New Zealand  
+Invited Seminar
+
+**Jun 2024**  
+Freie Universität Berlin, Berlin, Germany  
 Invited Seminar
 
 **Jun 2024**  

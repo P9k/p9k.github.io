@@ -1,5 +1,15 @@
 [
  {
+  "title": "Guest Lectures TU Dortmund",
+  "institution": "TU Dortmund University, Faculty of Electrical Engineering and Information Technology",
+  "role": "Guest lecturer",
+  "level": "BSc",
+  "term": "",
+  "year_start": "2026",
+  "year_end": "",
+  "location": "Dortmund"
+ },
+ {
   "title": "TUHH H2-Technik",
   "institution": "Technische Universität Hamburg (TUHH)",
   "role": "Co-lecturer",
