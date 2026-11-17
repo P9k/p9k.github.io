@@ -1359,7 +1359,25 @@ def build_talks(cfg, d):
     rest = [n for n in d.talks if id(n) not in used]
     if rest:
         out.append(section("Other contributions", "", "".join(talk_row(n) for n in rest)))
+    org = sorted([s for s in d.service if S(s.get("category")) == "Conference organization"],
+                 key=lambda s: (-I(s.get("year")), S(s.get("title")).lower()))
+    if org:
+        out.append(section("Conference organization and session chairs", "",
+                           "".join(org_row(s) for s in org)))
     return page(cfg, "talks.html", "Talks and posters", "\n".join(out))
+
+
+def org_row(s):
+    """A `service` note of category "Conference organization" on the talks page."""
+    title = E(S(s.get("title")) or s["_slug"])
+    url = S(s.get("url"))
+    if url:
+        title = '<a href="%s" rel="noopener">%s</a>' % (E(url), title)
+    where = ", ".join(x for x in [S(s.get("location")), S(s.get("country"))] if x)
+    meta = " &middot; ".join(E(x) for x in [S(s.get("role")), where] if x)
+    return ('<div class="talk"><div class="yr">%s</div><div>'
+            '<p class="tt">%s</p><p class="tw">%s</p></div></div>'
+            % (E(S(s.get("year"))), title, meta))
 
 
 # ----------------------------------------------------------------- teaching
