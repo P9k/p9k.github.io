@@ -101,8 +101,16 @@ E-MRS Fall Meeting 2025 — Symposium A
 Co-organizer, Warsaw, Poland
 
 **2024**  
+DPG Spring Meeting 2024  
+Session chair, Berlin, Germany
+
+**2024**  
 E-MRS Fall Meeting 2024 — Symposium C: Sustainable materials for chemical and electrochemical energy storage II  
 Main organizer, Warsaw, Poland
+
+**2023**  
+DPG Spring Meeting 2023  
+Session chair, Dresden, Germany
 
 **2023**  
 Inaugural New Zealand Hydrogen Symposium  
@@ -148,7 +156,7 @@ Student assistant, Philipps-Universität Marburg, Marburg
 Hydrogen and Green Iron Delegation to Western Australia, Perth, Australia  
 Invited Talk
 
-**May 2025**  
+**Feb 2025**  
 German-New Zealand WTZ Meeting 2025, Wellington, New Zealand  
 Invited Talk
 

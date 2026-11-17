@@ -120,18 +120,6 @@
   "venue": ""
  },
  {
-  "title": "German-New Zealand WTZ Meeting 2025",
-  "occasion_name": "German-New Zealand WTZ Meeting 2025",
-  "occasion_type": "Conference",
-  "category": "Invited Talk",
-  "format": "Talk",
-  "year": "2025",
-  "month": "5",
-  "city": "Wellington",
-  "country": "New Zealand",
-  "venue": ""
- },
- {
   "title": "IEA Hydrogen TCP Task 51 — Web Meeting",
   "occasion_name": "IEA Hydrogen TCP Task 51 Meeting (online)",
   "occasion_type": "Expert Meeting",
@@ -166,6 +154,18 @@
   "city": "Hamilton",
   "country": "New Zealand",
   "venue": "University of Waikato"
+ },
+ {
+  "title": "German-New Zealand WTZ Meeting 2025",
+  "occasion_name": "German-New Zealand WTZ Meeting 2025",
+  "occasion_type": "Conference",
+  "category": "Invited Talk",
+  "format": "Talk",
+  "year": "2025",
+  "month": "2",
+  "city": "Wellington",
+  "country": "New Zealand",
+  "venue": "Ministry of Business, Innovation and Employment (MBIE)"
  },
  {
   "title": "11th International Conference on Advanced Materials and Nanotechnology (AMN11)",
@@ -297,7 +297,7 @@
   "month": "3",
   "city": "Dresden",
   "country": "Germany",
-  "venue": "Technical University Dresdem"
+  "venue": "Technical University Dresden"
  },
  {
   "title": "Seminar: Massey University",
