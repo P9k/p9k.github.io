@@ -40,8 +40,9 @@ class CvWebsiteLinkTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.tmp.cleanup()
 
-    def test_html_cv_links_website(self):
-        self.assertIn('href="https://example.org"', build.build_cv(self.cfg, self.d))
+    def test_html_cv_has_no_website_button(self):
+        # cv.html is already on the website; only the downloads need the link
+        self.assertNotIn('href="https://example.org"', build.build_cv(self.cfg, self.d))
 
     def test_latex_cv_links_website(self):
         tex = build.build_latex_cv(self.cfg, self.d)

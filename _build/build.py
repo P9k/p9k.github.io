@@ -1429,9 +1429,6 @@ def build_cv(cfg, d):
     contact = []
     if S(prof.get("email")):
         contact.append(ext_link("mailto:%s" % obf_mail(S(prof.get("email"))), "Email", False))
-    site = site_url(cfg)
-    if site:
-        contact.append('<a href="%s" rel="noopener">%s</a>' % (E(site), E(bare_url(site))))
     for label, value in (("ORCID", S(prof.get("orcid"))), ("Google Scholar", S(prof.get("scholar")))):
         if value:
             contact.append(ext_link(E(value), E(label)))
