@@ -1343,9 +1343,12 @@ def talk_row(n):
     occ = S(n.get("occasion_name")) or S(n.get("title"))
     url = S(n.get("url"))
     name = ('<a href="%s" rel="noopener">%s</a>' % (E(url), E(occ))) if url else E(occ)
+    # optional one-line `context:` explaining what the occasion was
+    ctx = S(n.get("context"))
     return ('<div class="talk"><div class="yr">%s</div><div>'
-            '<p class="tt">%s</p><p class="tw">%s</p></div></div>'
-            % (E(month_year(n.get("year"), n.get("month"))), name, E(where)))
+            '<p class="tt">%s</p><p class="tw">%s</p>%s</div></div>'
+            % (E(month_year(n.get("year"), n.get("month"))), name, E(where),
+               ('<p class="ts">%s</p>' % E(ctx)) if ctx else ""))
 
 
 def build_talks(cfg, d):

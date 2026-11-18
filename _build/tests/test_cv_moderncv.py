@@ -73,6 +73,22 @@ class TalkTests(unittest.TestCase):
                                          public=False)])
         self.assertNotIn("Secret", out)
 
+    def test_context_in_description(self):
+        out = cv.invited_talks_tex([talk(category="Invited Talk", occasion_name="Delegation",
+                                         city="Perth", country="Australia",
+                                         context="Led by Stefan Rouenhoff & team")])
+        self.assertIn(r"{}{Talk -- Led by Stefan Rouenhoff \& team}", out)
+
+    def test_talk_row_shows_context_on_website(self):
+        import build
+        row = build.talk_row(talk(category="Invited Talk", occasion_name="Delegation",
+                                  context="Led by <b>X</b>"))
+        self.assertIn('<p class="ts">Led by &lt;b&gt;X&lt;/b&gt;</p>', row)
+
+    def test_talk_row_without_context_unchanged(self):
+        import build
+        self.assertNotIn('class="ts"', build.talk_row(talk(occasion_name="Delegation")))
+
     def test_sorted_newest_first(self):
         out = cv.invited_talks_tex([
             talk(category="Invited Talk", occasion_name="Old", year=2016),

@@ -54,8 +54,14 @@ def _talk_rows(talks, categories):
     return "".join(
         _entry(I(n.get("year")) or "", _talk_name(n), "",
                tex_escape(_place(n.get("city"), n.get("country"), note=n)), "",
-               "Poster" if _is_poster(n) else "Talk") + "\n"
+               _talk_kind(n)) + "\n"
         for n in rows)
+
+
+def _talk_kind(n):
+    kind = "Poster" if _is_poster(n) else "Talk"
+    ctx = S(n.get("context"))
+    return "%s -- %s" % (kind, tex_escape(ctx)) if ctx else kind
 
 
 def funding_tex(notes):
