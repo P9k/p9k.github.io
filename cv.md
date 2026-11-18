@@ -96,8 +96,12 @@ Alexander von Humboldt Foundation | Fellow | 85 k€ | 2 years
 
 ## Conference organization
 
+**2026**  
+DPG Spring Meeting 2026  
+Session chair, Dresden, Germany
+
 **2025**  
-E-MRS Fall Meeting 2025 — Symposium A  
+E-MRS Fall Meeting 2025 — Symposium A: Sustainable Energy Conversion: From Emerging Materials to Devices  
 Co-organizer, Warsaw, Poland
 
 **2024**  
