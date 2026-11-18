@@ -3,7 +3,8 @@
 **Group Leader Computational Materials Design**  
 **Deputy Head of Department of Materials Design**  
 Helmholtz-Zentrum Hereon, Max-Planck-Straße 1, 21502 Geesthacht  
-[paul.jerabek@hereon.de](mailto:paul.jerabek@hereon.de)
+[paul.jerabek@hereon.de](mailto:paul.jerabek@hereon.de)  
+[pauljerabek.de](https://pauljerabek.de)
 
 ## Education
 
