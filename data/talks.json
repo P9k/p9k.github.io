@@ -360,6 +360,18 @@
   "venue": "Karlsruhe Institute of Technology"
  },
  {
+  "title": "Seminar: Philipps-Universität Marburg",
+  "occasion_name": "Philipps-Universität Marburg",
+  "occasion_type": "Seminar",
+  "category": "Invited Seminar",
+  "format": "Talk",
+  "year": "2020",
+  "month": "6",
+  "city": "Marburg",
+  "country": "Germany",
+  "venue": "Theoretical Chemistry Colloquium (Prof. Robert Berger)"
+ },
+ {
   "title": "Summer School on Computational Chemistry — Knowledge for Tomorrow",
   "occasion_name": "Summer School/Workshop on Computational Chemistry “Knowledge for Tomorrow – Cooperative Research Projects in Sub-Saharan Africa”",
   "occasion_type": "Workshop",
