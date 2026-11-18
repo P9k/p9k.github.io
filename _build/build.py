@@ -179,6 +179,16 @@ def span(start, end, open_label="present"):
     return b or ""
 
 
+def site_url(cfg):
+    """The website's own address (config.yaml site.url), without trailing slash."""
+    return S((cfg.get("site") or {}).get("url")).rstrip("/")
+
+
+def bare_url(url):
+    """https://www.example.org/ -> example.org (for display)."""
+    return re.sub(r"^https?://(www\.)?", "", S(url)).rstrip("/")
+
+
 def money(value):
     n = I(value)
     if not n:
@@ -1419,6 +1429,9 @@ def build_cv(cfg, d):
     contact = []
     if S(prof.get("email")):
         contact.append(ext_link("mailto:%s" % obf_mail(S(prof.get("email"))), "Email", False))
+    site = site_url(cfg)
+    if site:
+        contact.append('<a href="%s" rel="noopener">%s</a>' % (E(site), E(bare_url(site))))
     for label, value in (("ORCID", S(prof.get("orcid"))), ("Google Scholar", S(prof.get("scholar")))):
         if value:
             contact.append(ext_link(E(value), E(label)))
@@ -1792,6 +1805,8 @@ def build_latex_cv(cfg, d):
     field_defs = []
     if S(prof.get("email")):
         field_defs.append(("Email", "mailto:%s" % S(prof.get("email")), S(prof.get("email"))))
+    if site_url(cfg):
+        field_defs.append(("Web", site_url(cfg), bare_url(site_url(cfg))))
     if S(prof.get("orcid")):
         field_defs.append(("ORCID", S(prof.get("orcid")), short_url(prof.get("orcid")).replace("orcid.org/", "")))
     if S(prof.get("scholar")):
@@ -1952,7 +1967,9 @@ def build_markdown_cv(cfg, d):
     if org_line:
         A(md_escape(org_line) + "  ")
     if S(prof.get("email")):
-        A("[%s](mailto:%s)" % (md_escape(S(prof.get("email"))), S(prof.get("email"))))
+        A("[%s](mailto:%s)  " % (md_escape(S(prof.get("email"))), S(prof.get("email"))))
+    if site_url(cfg):
+        A("[%s](%s)" % (md_escape(bare_url(site_url(cfg))), site_url(cfg)))
     A("")
 
     def sec(title, body):
