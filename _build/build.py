@@ -2082,10 +2082,13 @@ def build_bib(d):
     return "\n\n".join(bibtex_entry(n) for n in d.publications) + "\n"
 
 
-def build_sitemap(cfg):
+def build_sitemap(cfg, extra_pages=()):
+    """Nav pages first, then project-/thread- detail pages (sorted)."""
     base = cfg["site"]["url"].rstrip("/")
+    hrefs = [href for _, href in cfg["nav"]]
+    hrefs += sorted(p for p in extra_pages if p not in hrefs)
     urls = "".join('<url><loc>%s/%s</loc><lastmod>%s</lastmod></url>'
-                   % (base, href, TODAY.isoformat()) for _, href in cfg["nav"])
+                   % (base, href, TODAY.isoformat()) for href in hrefs)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">%s</urlset>\n' % urls)
 
@@ -2357,7 +2360,8 @@ def main():
     if opt.get("bibtex"):
         io.open(os.path.join(out_dir, "publications.bib"), "w", encoding="utf-8").write(build_bib(d))
     if opt.get("sitemap"):
-        io.open(os.path.join(out_dir, "sitemap.xml"), "w", encoding="utf-8").write(build_sitemap(cfg))
+        io.open(os.path.join(out_dir, "sitemap.xml"), "w", encoding="utf-8").write(
+            build_sitemap(cfg, [n for n in pages if re.match(r"^(project|thread)-.+\.html$", n)]))
     if opt.get("feed"):
         io.open(os.path.join(out_dir, "feed.xml"), "w", encoding="utf-8").write(build_feed(cfg, d))
 
