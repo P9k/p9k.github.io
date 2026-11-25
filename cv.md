@@ -102,6 +102,10 @@ DPG Spring Meeting 2026
 Session chair, Dresden, Germany
 
 **2025**  
+11th International Conference on Advanced Materials and Nanotechnology (AMN11)  
+Session chair, Christchurch, New Zealand
+
+**2025**  
 E-MRS Fall Meeting 2025 — Symposium A: Sustainable Energy Conversion: From Emerging Materials to Devices  
 Co-organizer, Warsaw, Poland
 
@@ -299,10 +303,6 @@ Invited Seminar
 
 **Sep 2025**  
 Curtin University, Perth, Australia  
-Invited Seminar
-
-**Feb 2025**  
-University of Waikato, Hamilton, New Zealand  
 Invited Seminar
 
 **Feb 2025**  
