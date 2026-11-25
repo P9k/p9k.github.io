@@ -432,6 +432,16 @@ def collect(cfg):
                              S(n.get("publication")).lower()))
     d.publications = pubs
 
+    # --- book contributions (type: contribution) ---------------------------
+    # Contributions that are NOT a co-authored publication (e.g. listed only
+    # under a book's "Contributors"). Kept apart from d.publications so they
+    # never enter the article count, numbering, BibTeX or the news feed.
+    contrib = []
+    if src.get("contributions"):
+        contrib = [n for n in scan(p("contributions"), "contribution") if is_public(n)]
+    contrib.sort(key=lambda n: (-I(n.get("year")), S(n.get("title")).lower()))
+    d.contributions = contrib
+
     # --- talks -------------------------------------------------------------
     talks = [n for n in scan(p("talks"), "talk") if is_public(n)]
     talks.sort(key=lambda n: (-I(n.get("year")), -I(n.get("month")), -I(n.get("day"))))
@@ -578,6 +588,48 @@ def publication_html(n, cfg, with_bibtex=True, gutter="year"):
         E((S(n.get("publication")) + " " + S(n.get("authors")) + " " +
            S(n.get("journal")) + " " + S(n.get("topics"))).lower()))
     return '<div class="pub"%s>%s<div>%s</div></div>' % (data, num, "".join(body))
+
+
+def contribution_parts(n):
+    """Plain-text pieces of a book contribution, shared by every renderer.
+
+    Note fields: role, authors, title, book, editors, publisher, year,
+    pages, doi, url.  Rendered as
+      <role> to: <authors>, <title>, in: <book> (Ed.: <editors>),
+      <publisher>, <year>, pp. <pages>.
+    """
+    eds = S(n.get("editors"))
+    multi = "," in eds or " and " in eds or "&" in eds
+    pages = S(n.get("pages"))
+    return {
+        "role": S(n.get("role")) or "Contributor",
+        "authors": S(n.get("authors")),
+        "title": S(n.get("title")),
+        "book": S(n.get("book")),
+        "editors": ("(Eds.: %s)" if multi else "(Ed.: %s)") % eds if eds else "",
+        "publisher": S(n.get("publisher")),
+        "year": S(n.get("year")),
+        "pages": ("pp. %s" % pages) if pages else "",
+        "url": doi_url(n) or S(n.get("url")),
+        "doi": S(n.get("doi")),
+    }
+
+
+def contribution_html(n):
+    c = contribution_parts(n)
+    head = ", ".join(x for x in [E(c["authors"]), "<em>%s</em>" % E(c["title"])] if x)
+    book = " ".join(x for x in ["in: <em>%s</em>" % E(c["book"]) if c["book"] else "",
+                                E(c["editors"])] if x)
+    tail = ", ".join(x for x in [book, E(c["publisher"]),
+                                 "<strong>%s</strong>" % E(c["year"]) if c["year"] else "",
+                                 E(c["pages"])] if x)
+    link = ""
+    if c["url"]:
+        link = ' &middot; <a href="%s" rel="noopener">%s</a>' % (
+            E(c["url"]), ("doi:" + E(c["doi"])) if c["doi"] else "link")
+    return ('<div class="pub"><div class="yr">%s</div><div>'
+            '<p class="t">%s</p><p class="a">%s to: %s</p><p class="j">%s%s</p>'
+            '</div></div>' % (E(c["year"]), E(c["title"]), E(c["role"]), head, tail, link))
 
 
 def bib_key(n):
@@ -812,6 +864,11 @@ def build_publications(cfg, d):
                   fmt_date(prof.get("metrics_asof"))))
 
     content = section("Publications", lead, "".join(controls) + "".join(groups))
+    if d.contributions:
+        content += section("Book contributions",
+                           "Contributions without chapter authorship.",
+                           "".join(contribution_html(n) for n in d.contributions),
+                           anchor="contributions")
     return page(cfg, "publications.html", "Publications", content, body_class="page-pubs")
 
 
@@ -1565,6 +1622,10 @@ def build_cv(cfg, d):
         out.append(section("Peer-reviewed journal articles",
                            "%d articles." % total, "".join(items)))
 
+    if d.contributions:
+        out.append(section("Book contributions", "",
+                           "".join(contribution_html(n) for n in d.contributions)))
+
     return page(cfg, "cv.html", "Curriculum Vitae", "\n".join(out), body_class="page-cv")
 
 
@@ -1919,6 +1980,23 @@ def build_latex_cv(cfg, d):
         pubs.append(r"\end{enumerate}}")
         sec("Peer-reviewed journal articles", "\n".join(pubs))
 
+    if d.contributions:
+        items = [r"{\sloppy\begin{itemize}[leftmargin=1.2em,itemsep=4pt]"]
+        for n in d.contributions:
+            c = contribution_parts(n)
+            book = " ".join(x for x in [
+                (r"in: \emph{%s}" % tex_escape(c["book"])) if c["book"] else "",
+                tex_escape(c["editors"])] if x)
+            parts = [x for x in [
+                tex_escape(c["authors"]), tex_escape(c["title"]), book,
+                tex_escape(c["publisher"]),
+                (r"\textbf{%s}" % tex_escape(c["year"])) if c["year"] else "",
+                tex_escape(c["pages"])] if x]
+            doi = (r" DOI: \href{%s}{%s}" % (c["url"], tex_escape(c["doi"]))) if c["doi"] else ""
+            items.append(r"\item %s to: %s.%s" % (tex_escape(c["role"]), ", ".join(parts), doi))
+        items.append(r"\end{itemize}}")
+        sec("Book contributions", "\n".join(items))
+
     A(r"\end{document}")
     doc = "\n".join(o)
     return doc.replace("%%UNICODE%%", tex_unicode_preamble(doc))
@@ -2055,6 +2133,22 @@ def build_markdown_cv(cfg, d):
                 total - i, md_highlight_authors(S(n.get("authors")), cfg["highlight_author"]),
                 md_escape(S(n.get("publication"))), tail))
         sec("Peer-reviewed journal articles", "\n".join(pubs))
+
+    if d.contributions:
+        rows = []
+        for n in d.contributions:
+            c = contribution_parts(n)
+            book = " ".join(x for x in [
+                ("in: *%s*" % md_escape(c["book"])) if c["book"] else "",
+                md_escape(c["editors"])] if x)
+            parts = [x for x in [
+                md_escape(c["authors"]), md_escape(c["title"]), book,
+                md_escape(c["publisher"]),
+                ("**%s**" % md_escape(c["year"])) if c["year"] else "",
+                md_escape(c["pages"])] if x]
+            doi = (" DOI: [%s](%s)" % (md_escape(c["doi"]), c["url"])) if c["doi"] else ""
+            rows.append("- %s to: %s.%s" % (md_escape(c["role"]), ", ".join(parts), doi))
+        sec("Book contributions", "\n".join(rows))
 
     return "\n".join(o).rstrip() + "\n"
 

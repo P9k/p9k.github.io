@@ -148,6 +148,26 @@ def publications_tex(papers, highlight_pattern):
     return "".join(out)
 
 
+def contributions_tex(contributions):
+    """Book contributions without chapter authorship (type: contribution)."""
+    out = []
+    for n in _public(contributions):
+        eds = S(n.get("editors"))
+        multi = "," in eds or " and " in eds or "&" in eds
+        bits = [x for x in [
+            tex_escape(n.get("authors")) if S(n.get("authors")) else "",
+            "``%s''" % tex_escape(n.get("title")) if S(n.get("title")) else "",
+            ("in: \\textit{%s}" % tex_escape(n.get("book"))
+             + ((" (Eds.: %s)" if multi else " (Ed.: %s)") % tex_escape(eds) if eds else ""))
+            if S(n.get("book")) else "",
+            tex_escape(n.get("publisher")) if S(n.get("publisher")) else "",
+            "\\textbf{%s}" % S(n.get("year")) if S(n.get("year")) else "",
+            "pp.~%s" % tex_escape(n.get("pages")) if S(n.get("pages")) else ""] if x]
+        out.append("  \\cvitem{%s}{%s to: %s.}\n\n" % (
+            S(n.get("year")), tex_escape(S(n.get("role")) or "Contributor"), ", ".join(bits)))
+    return "".join(out)
+
+
 def render_all(d, cfg):
     files = {
         "funding.tex": funding_tex(d.funding),
@@ -158,6 +178,7 @@ def render_all(d, cfg):
         "reviewing.tex": reviewing_tex(d.service),
         "metrics.tex": metrics_tex(d.profile),
         "publications.tex": publications_tex(d.publications, cfg.get("highlight_author", "")),
+        "contributions.tex": contributions_tex(getattr(d, "contributions", [])),
     }
     return {k: HEADER + v for k, v in files.items()}
 

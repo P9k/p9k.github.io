@@ -58,6 +58,7 @@ sources:
   education: "20-Arbeit/Lebenslauf/Ausbildung"
   service:   "20-Arbeit/Lebenslauf/Service"
   research:  "20-Arbeit/Lebenslauf/Forschung"
+  contributions: "20-Arbeit/Lebenslauf/Buchbeiträge"   # type: contribution
   news:      "20-Arbeit/Lebenslauf/News"
   profile:   "20-Arbeit/Lebenslauf/CV-Profil.md"
 

@@ -145,6 +145,20 @@ class PublicationTests(unittest.TestCase):
         self.assertNotIn(r"\textbf{}", out)
 
 
+class ContributionTests(unittest.TestCase):
+    def test_contribution_row(self):
+        out = cv.contributions_tex([{
+            "title": "Computational studies", "authors": "B. C. Wood, H. Fjellvåg",
+            "book": "Metal Hydrides", "editors": "V. A. Yartys",
+            "publisher": "Woodhead", "year": 2026, "pages": "309–383", "public": True}])
+        self.assertIn(r"\cvitem{2026}{Contributor to: B. C. Wood, H. Fjellvåg, "
+                      r"``Computational studies'', in: \textit{Metal Hydrides} (Ed.: V. A. Yartys), "
+                      r"Woodhead, \textbf{2026}, pp.~309–383.}", out)
+
+    def test_private_contribution_skipped(self):
+        self.assertEqual("", cv.contributions_tex([{"title": "X", "public": False}]))
+
+
 class WriteTests(unittest.TestCase):
     def test_write_creates_files(self):
         d = types.SimpleNamespace(funding=[], service=[], talks=[], publications=[],
@@ -153,8 +167,8 @@ class WriteTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             n = cv.write_cv_moderncv(d, cfg, tmp)
             files = sorted(os.listdir(os.path.join(tmp, "generated")))
-            self.assertEqual(8, n)
-            self.assertEqual(8, len(files))
+            self.assertEqual(9, n)
+            self.assertEqual(9, len(files))
             for f in files:
                 with open(os.path.join(tmp, "generated", f), encoding="utf-8") as fh:
                     self.assertTrue(fh.read().startswith("% generated from the Obsidian vault"))
