@@ -590,23 +590,28 @@ def publication_html(n, cfg, with_bibtex=True, gutter="year"):
     return '<div class="pub"%s>%s<div>%s</div></div>' % (data, num, "".join(body))
 
 
-def contribution_parts(n):
-    """Plain-text pieces of a book contribution, shared by every renderer.
+def _eds(names):
+    multi = "," in names or " and " in names or "&" in names
+    return ("Eds.: %s" if multi else "Ed.: %s") % names if names else ""
 
-    Note fields: role, authors, title, book, editors, publisher, year,
-    pages, doi, url.  Rendered as
-      <role> to: <authors>, <title>, in: <book> (Ed.: <editors>),
-      <publisher>, <year>, pp. <pages>.
+
+def contribution_parts(n):
+    """Plain-text pieces of a book chapter, shared by every renderer.
+
+    Note fields: authors (all chapter contributors; own name is
+    highlighted), title, chapter_editors, book, editors (book editors),
+    publisher, year, pages, doi, url.  Rendered as
+      <authors>, <title> (Chapter eds.: <chapter_editors>),
+      in: <book> (Ed.: <editors>), <publisher>, <year>, pp. <pages>.
     """
-    eds = S(n.get("editors"))
-    multi = "," in eds or " and " in eds or "&" in eds
+    ch = S(n.get("chapter_editors"))
     pages = S(n.get("pages"))
     return {
-        "role": S(n.get("role")) or "Contributor",
         "authors": S(n.get("authors")),
         "title": S(n.get("title")),
+        "chapter_editors": ("Chapter e" + _eds(ch)[1:]) if ch else "",
         "book": S(n.get("book")),
-        "editors": ("(Eds.: %s)" if multi else "(Ed.: %s)") % eds if eds else "",
+        "editors": _eds(S(n.get("editors"))),
         "publisher": S(n.get("publisher")),
         "year": S(n.get("year")),
         "pages": ("pp. %s" % pages) if pages else "",
@@ -615,11 +620,12 @@ def contribution_parts(n):
     }
 
 
-def contribution_html(n):
+def contribution_html(n, cfg):
     c = contribution_parts(n)
-    head = ", ".join(x for x in [E(c["authors"]), "<em>%s</em>" % E(c["title"])] if x)
-    book = " ".join(x for x in ["in: <em>%s</em>" % E(c["book"]) if c["book"] else "",
-                                E(c["editors"])] if x)
+    authors = highlight_authors(c["authors"], cfg["highlight_author"])
+    book = " ".join(x for x in [
+        "in: <em>%s</em>" % E(c["book"]) if c["book"] else "",
+        "(%s)" % E(c["editors"]) if c["editors"] else ""] if x)
     tail = ", ".join(x for x in [book, E(c["publisher"]),
                                  "<strong>%s</strong>" % E(c["year"]) if c["year"] else "",
                                  E(c["pages"])] if x)
@@ -627,9 +633,14 @@ def contribution_html(n):
     if c["url"]:
         link = ' &middot; <a href="%s" rel="noopener">%s</a>' % (
             E(c["url"]), ("doi:" + E(c["doi"])) if c["doi"] else "link")
-    return ('<div class="pub"><div class="yr">%s</div><div>'
-            '<p class="t">%s</p><p class="a">%s to: %s</p><p class="j">%s%s</p>'
-            '</div></div>' % (E(c["year"]), E(c["title"]), E(c["role"]), head, tail, link))
+    body = ['<p class="t">%s</p>' % E(c["title"])]
+    if authors:
+        body.append('<p class="a">%s</p>' % authors)
+    if c["chapter_editors"]:
+        body.append('<p class="a">%s</p>' % E(c["chapter_editors"]))
+    body.append('<p class="j">%s%s</p>' % (tail, link))
+    return '<div class="pub"><div class="yr">%s</div><div>%s</div></div>' % (
+        E(c["year"]), "".join(body))
 
 
 def bib_key(n):
@@ -865,9 +876,8 @@ def build_publications(cfg, d):
 
     content = section("Publications", lead, "".join(controls) + "".join(groups))
     if d.contributions:
-        content += section("Book contributions",
-                           "Contributions without chapter authorship.",
-                           "".join(contribution_html(n) for n in d.contributions),
+        content += section("Book Chapters", "",
+                           "".join(contribution_html(n, cfg) for n in d.contributions),
                            anchor="contributions")
     return page(cfg, "publications.html", "Publications", content, body_class="page-pubs")
 
@@ -1623,8 +1633,8 @@ def build_cv(cfg, d):
                            "%d articles." % total, "".join(items)))
 
     if d.contributions:
-        out.append(section("Book contributions", "",
-                           "".join(contribution_html(n) for n in d.contributions)))
+        out.append(section("Book Chapters", "",
+                           "".join(contribution_html(n, cfg) for n in d.contributions)))
 
     return page(cfg, "cv.html", "Curriculum Vitae", "\n".join(out), body_class="page-cv")
 
@@ -1986,16 +1996,18 @@ def build_latex_cv(cfg, d):
             c = contribution_parts(n)
             book = " ".join(x for x in [
                 (r"in: \emph{%s}" % tex_escape(c["book"])) if c["book"] else "",
-                tex_escape(c["editors"])] if x)
+                ("(%s)" % tex_escape(c["editors"])) if c["editors"] else ""] if x)
+            title = tex_escape(c["title"]) + (
+                (" (%s)" % tex_escape(c["chapter_editors"])) if c["chapter_editors"] else "")
             parts = [x for x in [
-                tex_escape(c["authors"]), tex_escape(c["title"]), book,
-                tex_escape(c["publisher"]),
+                highlight_authors_tex(c["authors"], cfg["highlight_author"]) if c["authors"] else "",
+                title, book, tex_escape(c["publisher"]),
                 (r"\textbf{%s}" % tex_escape(c["year"])) if c["year"] else "",
                 tex_escape(c["pages"])] if x]
             doi = (r" DOI: \href{%s}{%s}" % (c["url"], tex_escape(c["doi"]))) if c["doi"] else ""
-            items.append(r"\item %s to: %s.%s" % (tex_escape(c["role"]), ", ".join(parts), doi))
+            items.append(r"\item %s.%s" % (", ".join(parts), doi))
         items.append(r"\end{itemize}}")
-        sec("Book contributions", "\n".join(items))
+        sec("Book Chapters", "\n".join(items))
 
     A(r"\end{document}")
     doc = "\n".join(o)
@@ -2140,15 +2152,17 @@ def build_markdown_cv(cfg, d):
             c = contribution_parts(n)
             book = " ".join(x for x in [
                 ("in: *%s*" % md_escape(c["book"])) if c["book"] else "",
-                md_escape(c["editors"])] if x)
+                ("(%s)" % md_escape(c["editors"])) if c["editors"] else ""] if x)
+            title = md_escape(c["title"]) + (
+                (" (%s)" % md_escape(c["chapter_editors"])) if c["chapter_editors"] else "")
             parts = [x for x in [
-                md_escape(c["authors"]), md_escape(c["title"]), book,
-                md_escape(c["publisher"]),
+                md_highlight_authors(c["authors"], cfg["highlight_author"]) if c["authors"] else "",
+                title, book, md_escape(c["publisher"]),
                 ("**%s**" % md_escape(c["year"])) if c["year"] else "",
                 md_escape(c["pages"])] if x]
             doi = (" DOI: [%s](%s)" % (md_escape(c["doi"]), c["url"])) if c["doi"] else ""
-            rows.append("- %s to: %s.%s" % (md_escape(c["role"]), ", ".join(parts), doi))
-        sec("Book contributions", "\n".join(rows))
+            rows.append("- %s.%s" % (", ".join(parts), doi))
+        sec("Book Chapters", "\n".join(rows))
 
     return "\n".join(o).rstrip() + "\n"
 

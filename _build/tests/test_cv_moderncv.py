@@ -148,11 +148,14 @@ class PublicationTests(unittest.TestCase):
 class ContributionTests(unittest.TestCase):
     def test_contribution_row(self):
         out = cv.contributions_tex([{
-            "title": "Computational studies", "authors": "B. C. Wood, H. Fjellvåg",
+            "title": "Computational studies", "authors": "S. Kang, P. Jerabek",
+            "chapter_editors": "B. C. Wood, H. Fjellvåg",
             "book": "Metal Hydrides", "editors": "V. A. Yartys",
-            "publisher": "Woodhead", "year": 2026, "pages": "309–383", "public": True}])
-        self.assertIn(r"\cvitem{2026}{Contributor to: B. C. Wood, H. Fjellvåg, "
-                      r"``Computational studies'', in: \textit{Metal Hydrides} (Ed.: V. A. Yartys), "
+            "publisher": "Woodhead", "year": 2026, "pages": "309–383", "public": True}],
+            "P\\. ?Jerabek")
+        self.assertIn(r"\cvitem{2026}{S. Kang, \textbf{P. Jerabek}, "
+                      r"``Computational studies'' (Chapter eds.: B. C. Wood, H. Fjellvåg), "
+                      r"in: \textit{Metal Hydrides} (Ed.: V. A. Yartys), "
                       r"Woodhead, \textbf{2026}, pp.~309–383.}", out)
 
     def test_private_contribution_skipped(self):

@@ -462,6 +462,6 @@ Workshop Lecture
 2. T. Bollermann, M. Molon, C. Gemel, K. Freitag, R. W. Seidel, M. von Hopffgarten, **P. Jerabek**, G. Frenking, R. A. Fischer, Oligonuclear molecular models of intermetallic phases: a case study on \[Pd2Zn6Ga2(Cp\*)5(CH3)3\], *Chem. Eur. J.* **2012**, *18*, 4909–4915.
 1. T. Bollermann, K. Freitag, C. Gemel, M. Molon, **P. Jerabek**, G. Frenking, R. A. Fischer, The Rich Chemistry of \[Zn2Cp\*2\]: Trapping Three Different Types of Zinc Ligands in the PdZn7 Complex \[Pd(ZnCp\*)4(ZnMe)2\{Zn(tmeda)\}\], *Inorg. Chem.* **2011**, *4*, 10486–10492.
 
-## Book contributions
+## Book Chapters
 
-- Contributor to: B. C. Wood, H. Fjellvåg, Computational studies of metal–hydrogen systems as hydrogen storage materials, in: *Metal Hydrides for Hydrogen-Based Energy Storage, Volume 1: Fundamentals* (Ed.: V. A. Yartys), Woodhead Publishing (Elsevier), **2026**, pp. 309–383. DOI: [10.1016/B978-0-443-33370-5.00019-2](https://doi.org/10.1016/B978-0-443-33370-5.00019-2)
+- E. Alvares, T. W. Heo, **P. Jerabek**, S. Kang, S. Li, A. J. E. Rowberg, K. Sellschopp, Y. Song, M. D. Witman, B. C. Wood, Computational studies of metal–hydrogen systems as hydrogen storage materials (Chapter eds.: B. C. Wood, H. Fjellvåg), in: *Metal Hydrides for Hydrogen-Based Energy Storage, Volume 1: Fundamentals* (Ed.: V. A. Yartys), Woodhead Publishing (Elsevier), **2026**, pp. 309–383. DOI: [10.1016/B978-0-443-33370-5.00019-2](https://doi.org/10.1016/B978-0-443-33370-5.00019-2)

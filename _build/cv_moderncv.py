@@ -10,7 +10,7 @@ import io
 import os
 
 from build import (S, I, L, is_public, month_year, tex_escape,
-                   highlight_authors_tex)
+                   highlight_authors_tex, contribution_parts)
 
 HEADER = "% generated from the Obsidian vault by build.py -- do not edit\n"
 
@@ -148,23 +148,24 @@ def publications_tex(papers, highlight_pattern):
     return "".join(out)
 
 
-def contributions_tex(contributions):
-    """Book contributions without chapter authorship (type: contribution)."""
+def contributions_tex(contributions, highlight_pattern=""):
+    """Book chapters (type: contribution); own name highlighted."""
     out = []
     for n in _public(contributions):
-        eds = S(n.get("editors"))
-        multi = "," in eds or " and " in eds or "&" in eds
+        c = contribution_parts(n)
+        title = ("``%s''" % tex_escape(c["title"])) if c["title"] else ""
+        if c["chapter_editors"]:
+            title += " (%s)" % tex_escape(c["chapter_editors"])
         bits = [x for x in [
-            tex_escape(n.get("authors")) if S(n.get("authors")) else "",
-            "``%s''" % tex_escape(n.get("title")) if S(n.get("title")) else "",
-            ("in: \\textit{%s}" % tex_escape(n.get("book"))
-             + ((" (Eds.: %s)" if multi else " (Ed.: %s)") % tex_escape(eds) if eds else ""))
-            if S(n.get("book")) else "",
-            tex_escape(n.get("publisher")) if S(n.get("publisher")) else "",
-            "\\textbf{%s}" % S(n.get("year")) if S(n.get("year")) else "",
-            "pp.~%s" % tex_escape(n.get("pages")) if S(n.get("pages")) else ""] if x]
-        out.append("  \\cvitem{%s}{%s to: %s.}\n\n" % (
-            S(n.get("year")), tex_escape(S(n.get("role")) or "Contributor"), ", ".join(bits)))
+            highlight_authors_tex(c["authors"], highlight_pattern) if c["authors"] else "",
+            title,
+            ("in: \\textit{%s}" % tex_escape(c["book"])
+             + ((" (%s)" % tex_escape(c["editors"])) if c["editors"] else ""))
+            if c["book"] else "",
+            tex_escape(c["publisher"]),
+            "\\textbf{%s}" % c["year"] if c["year"] else "",
+            "pp.~%s" % tex_escape(S(n.get("pages"))) if S(n.get("pages")) else ""] if x]
+        out.append("  \\cvitem{%s}{%s.}\n\n" % (c["year"], ", ".join(bits)))
     return "".join(out)
 
 
@@ -178,7 +179,8 @@ def render_all(d, cfg):
         "reviewing.tex": reviewing_tex(d.service),
         "metrics.tex": metrics_tex(d.profile),
         "publications.tex": publications_tex(d.publications, cfg.get("highlight_author", "")),
-        "contributions.tex": contributions_tex(getattr(d, "contributions", [])),
+        "contributions.tex": contributions_tex(getattr(d, "contributions", []),
+                                               cfg.get("highlight_author", "")),
     }
     return {k: HEADER + v for k, v in files.items()}
 
