@@ -1,0 +1,78 @@
+{
+ "contact.html": {
+  "date": "2026-11-27",
+  "hash": "3af405f4a76bd223db8b6ec5f56354177e4a9f90"
+ },
+ "cv.html": {
+  "date": "2026-11-27",
+  "hash": "6f26442004213b48c7ac2e84c9f478b5e4f74733"
+ },
+ "gallery.html": {
+  "date": "2026-11-27",
+  "hash": "6deb27b861273dff405c77121f1a5aab60c7e116"
+ },
+ "impressum.html": {
+  "date": "2026-11-27",
+  "hash": "9cb042a1b75a03c3f1f04c55fd5a7815d6f37efd"
+ },
+ "index.html": {
+  "date": "2026-11-27",
+  "hash": "1666aed8f9453636212d8760d251cc678847bce9"
+ },
+ "project-experimental-and-computational-accelerated-metal-hydride-aging-for-space-applications.html": {
+  "date": "2026-11-27",
+  "hash": "1250e608dabcbf53ad5d3274d3e7ff25eb72859c"
+ },
+ "project-greenh2metals.html": {
+  "date": "2026-11-27",
+  "hash": "9ce0fabc0c92de626c64574af1c483eb7dc45593"
+ },
+ "project-he-honoka-hauwai.html": {
+  "date": "2026-11-27",
+  "hash": "9ab18b599ab3434b7f34c2d1ed776a0727a0544d"
+ },
+ "project-hydridvault.html": {
+  "date": "2026-11-27",
+  "hash": "57ca5f2f1edfc44ec2653187f7bbecfc3c11b07a"
+ },
+ "project-nzmat4h2sto.html": {
+  "date": "2026-11-27",
+  "hash": "b7134b8f11066acbb191fbe40de51ab8cedad47e"
+ },
+ "projects.html": {
+  "date": "2026-11-27",
+  "hash": "bd46ae9d297565b0f85653ea0e26429668e619da"
+ },
+ "publications.html": {
+  "date": "2026-11-27",
+  "hash": "490a486d9a3ef884ce82e640ca3ebed418ff8d4f"
+ },
+ "talks.html": {
+  "date": "2026-11-27",
+  "hash": "76593fc1e926247bffc9be031bb8352b57d63309"
+ },
+ "teaching.html": {
+  "date": "2026-11-27",
+  "hash": "0d3e4cbc01bf7a174daa0e84a828283c9f7096cd"
+ },
+ "thread-ai-driven-materials-research.html": {
+  "date": "2026-11-27",
+  "hash": "911d337278ef020b10f31e5f38aca87b247fb805"
+ },
+ "thread-chemical-bonding-analysis.html": {
+  "date": "2026-11-27",
+  "hash": "1f4183ee7472c311178cdf3787460ac4205b2803"
+ },
+ "thread-metal-hydrides-materials-for-hydrogen-storage.html": {
+  "date": "2026-11-27",
+  "hash": "09153e5a1c5588342096aff52700600b569851f3"
+ },
+ "thread-multiscale-simulations.html": {
+  "date": "2026-11-27",
+  "hash": "51a28633d05454db88c69cc03fe5f1089653d78a"
+ },
+ "thread-relativistic-quantum-chemistry.html": {
+  "date": "2026-11-27",
+  "hash": "613b0a341ad195c36ba833943e8107563705a977"
+ }
+}

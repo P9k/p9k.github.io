@@ -13,6 +13,7 @@ Requires:   Python 3.8+ and PyYAML.   No other dependencies.
 
 import argparse
 import datetime as dt
+import hashlib
 import html
 import io
 import json
@@ -671,7 +672,57 @@ def bibtex_entry(n):
 #  Page templates
 # ===========================================================================
 
-def page(cfg, current, title, content, extra_head="", extra_js="", body_class=""):
+def plain_summary(text, limit=160):
+    """Markdown/HTML -> one plain sentence-ish line for meta descriptions."""
+    t = re.sub(r"<[^>]+>", "", S(text))
+    t = re.sub(r"!?\[\[([^\]|]*\|)?([^\]]*)\]\]", r"\2", t)        # wikilinks
+    t = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", t)                  # md links
+    t = re.sub(r"[*_`#>]+", "", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    if len(t) <= limit:
+        return t
+    cut = t[:limit - 1].rsplit(" ", 1)[0].rstrip(",;:")
+    return cut + "…"
+
+
+def _who(cfg):
+    return S(cfg["_profile"].get("name")) or cfg["site"]["title"]
+
+
+def canonical_url(cfg, path):
+    """Absolute URL a page should be indexed under; the homepage is '/'."""
+    base = cfg["site"]["url"].rstrip("/")
+    return base + "/" if path == "index.html" else "%s/%s" % (base, path)
+
+
+def seo_head(cfg, path, title, description):
+    """Canonical link plus Open Graph / Twitter card tags (link previews on
+    LinkedIn, Teams, Slack, mail; Google also reads the description)."""
+    base = cfg["site"]["url"].rstrip("/")
+    name = S(cfg["_profile"].get("name")) or cfg["site"]["title"]
+    url = canonical_url(cfg, path)
+    tags = [
+        '<link rel="canonical" href="%s">' % E(url),
+        '<meta property="og:type" content="%s">' % ("profile" if path == "index.html" else "website"),
+        '<meta property="og:site_name" content="%s">' % E(name),
+        '<meta property="og:title" content="%s">' % E(
+            title if path == "index.html" else "%s – %s" % (title, name)),
+        '<meta property="og:description" content="%s">' % E(description),
+        '<meta property="og:url" content="%s">' % E(url),
+        '<meta property="og:locale" content="en_US">',
+        '<meta property="og:image" content="%s/assets/img/profile.jpg">' % E(base),
+        '<meta property="og:image:alt" content="%s">' % E(name),
+        '<meta name="twitter:card" content="summary">',
+    ]
+    return "\n".join(tags)
+
+
+def page(cfg, current, title, content, extra_head="", extra_js="", body_class="",
+         path=None, description=None):
+    """`current` marks the active nav entry; `path` is the page's own file
+    name (defaults to `current`; detail pages differ)."""
+    path = path or current
+    description = plain_summary(description) or cfg["site"]["description"]
     nav = []
     for label, href in cfg["nav"]:
         cls = ' class="cur"' if href == current else ""
@@ -687,7 +738,8 @@ def page(cfg, current, title, content, extra_head="", extra_js="", body_class=""
     return (tpl
             .replace("{{lang}}", E(cfg["site"]["lang"]))
             .replace("{{title}}", E(title))
-            .replace("{{description}}", E(cfg["site"]["description"]))
+            .replace("{{seo_head}}", seo_head(cfg, path, title, description))
+            .replace("{{description}}", E(description))
             .replace("{{body_class}}", E(body_class))
             .replace("{{bg}}", E(S(cfg["options"].get("background_animation")) or "none"))
             .replace("{{bgmotion}}", "1" if cfg["options"].get("background_motion") is True else "0")
@@ -835,7 +887,11 @@ def build_index(cfg, d):
     home_title = S(cfg["site"].get("home_title")) or cfg["site"]["title"]
     js = ('<script src="assets/gallery-data.js" defer></script>\n'
           '<script src="assets/gallery.js" defer></script>') if (gal and n_pick > 0) else ""
-    return page(cfg, "index.html", home_title, "\n".join(out), extra_js=js)
+    prof = d.profile
+    who = ", ".join(x for x in [S(prof.get("name")), S(prof.get("position")),
+                                S(prof.get("organisation"))] if x)
+    return page(cfg, "index.html", home_title, "\n".join(out), extra_js=js,
+                description=("%s. %s" % (who, cfg["site"]["description"])) if who else None)
 
 
 # ------------------------------------------------------------- publications
@@ -879,7 +935,11 @@ def build_publications(cfg, d):
         content += section("Book Chapters", "",
                            "".join(contribution_html(n, cfg) for n in d.contributions),
                            anchor="contributions")
-    return page(cfg, "publications.html", "Publications", content, body_class="page-pubs")
+    nch = len(d.contributions)
+    desc = "Publications of %s: %d peer-reviewed journal articles%s, with DOIs and BibTeX." % (
+        _who(cfg), len(pubs), (" and %d book chapter%s" % (nch, "s" * (nch != 1))) if nch else "")
+    return page(cfg, "publications.html", "Publications", content, body_class="page-pubs",
+                description=desc)
 
 
 # ----------------------------------------------------------------- projects
@@ -939,7 +999,8 @@ def build_projects(cfg, d):
                            if S(f.get("duration")) else ""))
         lead = "Third-party funding and fellowships acquired, %s in total." % money(total)
         out.append(section("Funding", lead, "".join(rows)))
-    return page(cfg, "projects.html", "Projects", "\n".join(out))
+    return page(cfg, "projects.html", "Projects", "\n".join(out),
+                description="Research projects and third-party funding of %s." % _who(cfg))
 
 
 def build_project_page(cfg, d, p):
@@ -992,7 +1053,8 @@ def build_project_page(cfg, d, p):
 
     fname = "project-%s.html" % project_slug(p)
     return fname, page(cfg, "projects.html", title_plain, "\n".join(out),
-                       body_class="page-project")
+                       body_class="page-project", path=fname,
+                       description=S(p.get("short")) or p.get("_body", ""))
 
 
 def links_section(entity):
@@ -1044,7 +1106,8 @@ def build_thread_page(cfg, d, t):
                            "".join(publication_html(n, cfg) for n in rel)))
 
     fname = "thread-%s.html" % thread_slug(t)
-    return fname, page(cfg, "index.html", title, "\n".join(out), body_class="page-thread")
+    return fname, page(cfg, "index.html", title, "\n".join(out), body_class="page-thread",
+                       path=fname, description=t.get("_body", ""))
 
 
 # ------------------------------------------------------------ structure gallery
@@ -1402,7 +1465,9 @@ def build_gallery(cfg, d):
     content = section("Structure gallery", intro, body) + dialog
     return page(cfg, "gallery.html", "Structure gallery", content,
                 extra_js='<script src="assets/gallery-data.js"></script>\n'
-                         '<script src="assets/gallery.js"></script>', body_class="page-gallery")
+                         '<script src="assets/gallery.js"></script>', body_class="page-gallery",
+                description="Interactive 3D gallery of crystal and molecular structures "
+                            "from publications of %s." % _who(cfg))
 
 
 # -------------------------------------------------------------------- talks
@@ -1444,7 +1509,9 @@ def build_talks(cfg, d):
     if org:
         out.append(section("Conference organization and session chairs", "",
                            "".join(org_row(s) for s in org)))
-    return page(cfg, "talks.html", "Talks and posters", "\n".join(out))
+    return page(cfg, "talks.html", "Talks and posters", "\n".join(out),
+                description="%d invited and contributed talks, posters and seminars by %s." % (
+                    len(d.talks), _who(cfg)))
 
 
 def org_row(s):
@@ -1485,7 +1552,8 @@ def build_teaching(cfg, d):
         items = [s for s in d.service if S(s.get("category")) == cat]
         if items:
             out.append(section(label, "", "".join(md_block(s.get("_body", "")) for s in items)))
-    return page(cfg, "teaching.html", "Teaching", "\n".join(out))
+    return page(cfg, "teaching.html", "Teaching", "\n".join(out),
+                description="Teaching, mentoring and outreach of %s." % _who(cfg))
 
 
 # ----------------------------------------------------------------------- CV
@@ -1636,7 +1704,9 @@ def build_cv(cfg, d):
         out.append(section("Book Chapters", "",
                            "".join(contribution_html(n, cfg) for n in d.contributions)))
 
-    return page(cfg, "cv.html", "Curriculum Vitae", "\n".join(out), body_class="page-cv")
+    return page(cfg, "cv.html", "Curriculum Vitae", "\n".join(out), body_class="page-cv",
+                description="Curriculum vitae of %s: positions, education, funding, "
+                            "teaching, talks and publications." % _who(cfg))
 
 
 # ------------------------------------------------------------------- contact
@@ -1659,7 +1729,8 @@ def build_contact(cfg, d):
     if not out:
         out.append(section("Contact", "", "<p>No contact details configured yet.</p>"))
 
-    return page(cfg, "contact.html", "Contact", "\n".join(out))
+    return page(cfg, "contact.html", "Contact", "\n".join(out),
+                description="How to contact %s." % _who(cfg))
 
 
 def impressum_address(cfg, d):
@@ -1702,7 +1773,8 @@ def build_legal(cfg, d):
                   .replace("{{email}}", mail))
         out.append(section("Privacy policy", "",
                            '<div class="legal">%s</div>' % txt, anchor="datenschutz"))
-    return page(cfg, "impressum.html", "Legal notice & Privacy", "\n".join(out))
+    return page(cfg, "impressum.html", "Legal notice & Privacy", "\n".join(out),
+                description="Legal notice and privacy policy of the website of %s." % _who(cfg))
 
 
 # ===========================================================================
@@ -2190,13 +2262,44 @@ def build_bib(d):
     return "\n\n".join(bibtex_entry(n) for n in d.publications) + "\n"
 
 
-def build_sitemap(cfg, extra_pages=()):
-    """Nav pages first, then project-/thread- detail pages (sorted)."""
-    base = cfg["site"]["url"].rstrip("/")
+LASTMOD_STATE = os.path.join(HERE, "sitemap-lastmod.json")
+
+
+def page_lastmod(pages):
+    """Date each page's content last really changed, for <lastmod>.
+
+    A page's hash ignores the "Last updated <date>" footer, so a rebuild
+    without content changes keeps the old date. State lives in
+    _build/sitemap-lastmod.json (committed, so every machine agrees)."""
+    try:
+        with io.open(LASTMOD_STATE, encoding="utf-8") as fh:
+            state = json.load(fh)
+    except (OSError, ValueError):
+        state = {}
+    stamp = TODAY.strftime("%d %B %Y")
+    out, new_state = {}, {}
+    for name, text in pages.items():
+        h = hashlib.sha1(text.replace(stamp, "").encode("utf-8")).hexdigest()
+        old = state.get(name) or {}
+        date = old.get("date") if old.get("hash") == h and old.get("date") else TODAY.isoformat()
+        new_state[name] = {"hash": h, "date": date}
+        out[name] = date
+    if new_state != state:
+        with io.open(LASTMOD_STATE, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(new_state, fh, indent=1, sort_keys=True)
+            fh.write("\n")
+    return out
+
+
+def build_sitemap(cfg, extra_pages=(), lastmod=None):
+    """Nav pages first, then project-/thread- detail pages (sorted). The
+    homepage is listed as '/' to match its canonical URL."""
+    lastmod = lastmod or {}
     hrefs = [href for _, href in cfg["nav"]]
     hrefs += sorted(p for p in extra_pages if p not in hrefs)
-    urls = "".join('<url><loc>%s/%s</loc><lastmod>%s</lastmod></url>'
-                   % (base, href, TODAY.isoformat()) for href in hrefs)
+    urls = "".join('<url><loc>%s</loc><lastmod>%s</lastmod></url>'
+                   % (E(canonical_url(cfg, href)), lastmod.get(href, TODAY.isoformat()))
+                   for href in hrefs)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">%s</urlset>\n' % urls)
 
@@ -2469,7 +2572,8 @@ def main():
         io.open(os.path.join(out_dir, "publications.bib"), "w", encoding="utf-8").write(build_bib(d))
     if opt.get("sitemap"):
         io.open(os.path.join(out_dir, "sitemap.xml"), "w", encoding="utf-8").write(
-            build_sitemap(cfg, [n for n in pages if re.match(r"^(project|thread)-.+\.html$", n)]))
+            build_sitemap(cfg, [n for n in pages if re.match(r"^(project|thread)-.+\.html$", n)],
+                          page_lastmod(pages)))
     if opt.get("feed"):
         io.open(os.path.join(out_dir, "feed.xml"), "w", encoding="utf-8").write(build_feed(cfg, d))
 
